@@ -1,0 +1,16 @@
+{
+  "name": "cypressautomation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx cypress run --spec cypress/Integration/test.js",
+    "testChrome": "npx cypress run --spec cypress/Integration/test.js --browser chrome"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^13.7.3",
+    "cypress-mochawesome-reporter": "^3.8.2"
+  }
+}
