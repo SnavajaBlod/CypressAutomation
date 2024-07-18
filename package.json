@@ -1,16 +1,16 @@
 {
-  "name": "cypressautomation",
+  "name": "cypressautomationlocal",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx cypress run --spec cypress/Integration/test.js",
-    "testChrome": "npx cypress run --spec cypress/Integration/test.js --browser chrome"
+    "test": "npx cypress run",
+    "testChrome": "npx cypress run --spec cypress/integration/tests/test.js --browser chrome"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "cypress": "^13.7.3",
+    "cypress": "^13.13.0",
     "cypress-mochawesome-reporter": "^3.8.2"
   }
 }
