@@ -23,11 +23,6 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-import loginPage from "C:/Users/VC/CypressAutomationLocal/cypress/integration/pageObjects/Common/loginPage"
-
-Cypress.Commands.add('getLoginPage', () => {
-    return new loginPage();
-})
 
 Cypress.Commands.add('loginToApplication', (email) => {
     cy.get('[type="text"]').type(email)
