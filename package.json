@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npx cypress run",
-    "testChrome": "npx cypress run --spec cypress/integration/tests/test.js --browser chrome"
+    "simulateRequst": "npx cypress run --spec cypress/integration/tests/Utility/SimulateRequest.js"
   },
   "author": "",
   "license": "ISC",

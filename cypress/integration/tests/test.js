@@ -1,72 +1,73 @@
-import loginPage from "../pageObjects/Common/loginPage"
-import raiseRequest from "../pageObjects/Hospital/raiseRequest"
-import driverMapping from "../pageObjects/Admin/driverMapping"
-import liveOrders from "../pageObjects/Admin/liveOrders"
-
-describe('First Test', function () {
+import baseClass from '../tests/baseClass'
+describe('Flat Package - E2E Positive Cases', function () {
+    const base = new baseClass()
+    const orderTypes = base.convertToArray(Cypress.env("ORDER_TYPE"))
+    const creditTypes = base.convertToArray(Cypress.env("CREDIT_TYPE"))
+    const prefBloodbanks = base.convertToArray(Cypress.env("PREFERRED_BLOODBANK"))
+    const appLink = Cypress.env("APP_DEPLOYMENT")
+    const admin = Cypress.env("ADMIN_EMAIL")
+    const driverAppLink = Cypress.env("DRIVER_DEPLOYMENT")
+    const bloodbank = Cypress.env("BLOODBANK")
+    const hub = Cypress.env("HUB")
+    const driver = Cypress.env("DRIVER")
+    let dist
     beforeEach(function () {
-        cy.visit("https://dev.blodplus.com/")
+        
+        cy.visit(appLink)
         cy.clearCookies();
         cy.clearLocalStorage();
         indexedDB.deleteDatabase('firebaseLocalStorageDb');
-        cy.fixture('example').then(function (data) {
-            this.data = data
-        })
+   
     })
-    it('Test Case', function () {
-
-        const obj = new loginPage()
-        const obj2 = new raiseRequest
-        const obj3 = new driverMapping
-        const obj4 = new liveOrders
-    cy.log('1')
-        cy.loginToApplication("brown@gmail.com")
-       cy.get('#raiserequest').click()
-        obj2.placeOrder().then(requestId => {
-            // requestId is now available here
-            console.log('2')
-            obj.logoutOfApplication();
-            // Login again with a different user
-            cy.loginToApplication("bloodsupport@blod.in");
-
-            // Click on a button to initiate mapping
-            cy.get('button').contains('Link').click();
-            console.log('3')
-            // Map driver with requestId
-            obj3.mapDriver(requestId)
-            cy.get('span').contains('Dashboard').click()
-            cy.get('#liveorders').click()
-            cy.wait(8000)
-           obj4.viewDetails().then(values => {
-                console.log('4')
-                cy.then(() => {
-                    cy.log('Total:', values.total);
-                    cy.log('Due:', values.due);
-                    cy.log('Credit:', values.credit);
-                    cy.log('Paid:', values.paid);
-                });
-                console.log('5')
-                cy.visit("https://blodplus-driver-git-develop-blod-in-team.vercel.app")
-                cy.loginToDriverApp().then(() => {
-                    cy.agentArrived(requestId + "-a")
-                    cy.sampleAcquired(requestId + "-a")
-                    cy.crossMatching(requestId + "-a")
-                    cy.issued(requestId + "-a")
-                    cy.delivered(requestId + "-a")
+    orderTypes.forEach(orderType => {
+        creditTypes.forEach(creditType => {
+            prefBloodbanks.forEach(prefBloodbank => {
+                it(`[${orderType} Order] [${creditType}] [Preferred Bloodbank-${prefBloodbank}] `, function () {
+                    let hospital = base.getHospital(creditType, prefBloodbank)
+                    cy.getDistances('asd','fdsa').then(()=>
+                        {
+                        dist=Cypress.env('DISTANCE')
+                        })
+              cy.log(dist)
+                    cy.loginToApplication(hospital.email)
+                    cy.importPages().then(pages => {
+                        pages.raiseRequest.placeOrder(orderType).then(requestId => {
+                            cy.logoutOfApplication();
+                            cy.log(admin)
+                            cy.loginToApplication(admin);
+                            pages.driverMapping.mapDriver(requestId)
+                            cy.request('GET', 'https://dev.blodplus.com/api/getDistance?source=Anna%20Nagar%2C%20Chennai%2C%20Tamil%20Nadu%2C%20India&destination=V.H.S%20blood%20Bank%2C%20Pallipattu%2C%20Tharamani%2C%20Chennai%2C%20Tamil%20Nadu%2C%20India&type=api&token=blodadmin').then(function(response){
+                                cy.log(response.body)
+                            })
+                            
+                            cy.window().then((win) => {
+                                // Store original console.log
+                                const originalConsoleLog = win.console.log;
+                                cy.log(originalConsoleLog)
+                            })
+                            pages.liveOrders.viewDetailsPaymentInfo().then(values => {
+                                cy.then(() => {
+                                    cy.log('Total:', values.total);
+                                    cy.log('Due:', values.due);
+                                    cy.log('Credit:', values.credit);
+                                    cy.log('Paid:', values.paid);
+                                });
+                                cy.visit(driverAppLink)
+                                cy.loginToDriverApp().then(() => {
+                                    cy.agentArrived(requestId + "-a")
+                                    cy.sampleAcquired(requestId + "-a")
+                                    cy.crossMatching(requestId + "-a")
+                                    cy.issued(requestId + "-a")
+                                    cy.delivered(requestId + "-a")
+                                })
+                                cy.visit(appLink)
+                                pages.liveOrders.approveInvoice()
+                            })
+                        })
+                    })
                 })
-                console.log('6')
-                 cy.visit("https://dev.blodplus.com/")
-                 cy.get('#liveorders').click()
-                 obj4.approveInvoice()
-                 console.log('7')
-
             })
         })
     })
-    it('Test Case 2', function () {
-        cy.log('1')
-        cy.loginToApplication("b@gmail.com")
-       cy.get('#raiserequest').click()
-    })
-   
 })
+

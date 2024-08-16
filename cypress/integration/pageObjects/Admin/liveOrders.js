@@ -1,44 +1,84 @@
-// Corrected structure for liveOrders class with viewDetails method
 export default class liveOrders {
-  viewDetails() {
+  //element locators
+  viewDetailsButton() {
+    return cy.get('tbody tr:nth-child(1) td:nth-child(12) div div div button')
+  }
+  viewDetailsTotal() {
+    return cy.get('p:contains("Total Amount") + p')
+  }
+  viewDetailsPaid() {
+    return cy.get('p:contains("Amount Paid") + p')
+  }
+  viewDetailsDue() {
+    return cy.get('p:contains("Order Amount Due") + p')
+  }
+  viewDetailsCredit() {
+    return cy.get('p:contains("Credit Amount") + p')
+  }
+  actionsButton()
+  {
+    return cy.get('tbody tr:nth-child(1) td:nth-child(7) div div div button')
+  }
+  approveInvoiceButton()
+  {
+    return cy.get('button').contains('Approve Invoice')
+  }
+  searchBar()
+  {
+    return cy.get('#global-filter')
+  }
+
+  viewDetailsPaymentInfo(requestId) {
+    //returns object[paid,credit,total,due] from view details payment details
+    cy.get('span').then(($spans) => {
+      const dashboardSpan = $spans.toArray().find(span => span.innerText.includes('Dashboard'));
+      if (dashboardSpan) {
+        cy.wrap(dashboardSpan).click();
+      }
+      cy.get('#liveorders').click({ force: true });
+      this.searchBar().type(requestId)
+     // cy.wait(8000)
+    })
     return new Cypress.Promise((resolve, reject) => {
-      cy.get('tbody tr:nth-child(1) td:nth-child(12) div div div button').click();
-
+      this.viewDetailsButton().click();
       let values = {}
-
-      cy.get('p:contains("Total Amount") + p').then((text) => {
+      this.viewDetailsTotal().then((text) => {
         let totalAmount = text.text().trim();
         values['total'] = totalAmount
       });
-
-      cy.get('p:contains("Amount Paid") + p').then((text) => {
+      this.viewDetailsPaid().then((text) => {
         let paidAmount = text.text().trim();
         values['paid'] = paidAmount
       });
-
-      cy.get('p:contains("Order Amount Due") + p').then((text) => {
+      this.viewDetailsDue().then((text) => {
         let dueAmount = text.text().trim();
         values['due'] = dueAmount
       });
-
-      cy.get('p:contains("Credit Amount") + p').then((text) => {
+      this.viewDetailsCredit().then((text) => {
         let creditAmount = text.text().trim();
         values['credit'] = creditAmount
       });
-      resolve(values); // Resolve the promise with the populated amounts object  
+      resolve(values);
     })
-
   }
-  approveInvoice()
-  {
+
+  approveInvoice(requestId) {
+    //approves invoice
+    cy.get('span').then(($spans) => {
+      const dashboardSpan = $spans.toArray().find(span => span.innerText.includes('Dashboard'));
+      if (dashboardSpan) {
+        cy.wrap($dashboard).click();
+      }
+      cy.get('#liveorders').click({ force: true });
+      this.searchBar().type(requestId)
+    })
     return new Cypress.Promise((resolve, reject) => {
-     // cy.get('span').contains('Dashboard').click()
-      //cy.get('#liveorders').click()
-      cy.get('tbody tr:nth-child(1) td:nth-child(7) div div div button').click();
-      cy.get('button').contains('Approve Invoice').click()
-      //div[@class='Toastify']/div/div/div/div/2][text()='Delivery Set To Completed!']
-      cy.get('.Toastify div div div div:nth-child(2)',{timeout: 10000}).contains('Delivery Set To Completed')
+      this.actionsButton().click();
+      this.approveInvoiceButton().click()
+      cy.get('.Toastify div div div div:nth-child(2)', { timeout: 20000 }).contains('Delivery Set To Completed')
       resolve()
     })
   }
+
+
 }

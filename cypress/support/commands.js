@@ -23,20 +23,39 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+import raiseRequestPage from "../integration/pageObjects/Hospital/raiseRequest"
+import driverMappingPage from "../integration/pageObjects/Admin/driverMapping"
+import liveOrdersPage from "../integration/pageObjects/Admin/liveOrders"
+import bloodbankPricesPage from "../integration/pageObjects/Admin/updateBloodbankPrices"
+import hPendingActionsPage from "../integration/pageObjects/Hospital/pendingActions"
 
+Cypress.Commands.add('importPages', () => {
+    return {
+        raiseRequest: new raiseRequestPage(),
+        driverMapping: new driverMappingPage(),
+        liveOrders: new liveOrdersPage(),
+        hPendingActions: new hPendingActionsPage(),
+        bloodbankPrices: new bloodbankPricesPage()
+    }
+})
 Cypress.Commands.add('loginToApplication', (email) => {
-    cy.get('[type="text"]').type(email)
+    cy.get('[placeholder="Enter your email address here"]').type(email)
     cy.get('[type="password"]').type("blodadmin")
     cy.get('button').contains('Login').click()
 })
-
-Cypress.Commands.add('loginToDriverApp', () => {
-    cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app', () => {
+Cypress.Commands.add('logoutOfApplication', () => {
+    cy.get('#nav-dropdown').click({ force: true })
+    cy.get('button').contains('Log Out').click({ force: true })
+    cy.get('button').contains('Yes').click({ force: true })
+})
+Cypress.Commands.add('loginToDriverApp', (driver) => {
+    const d = { email: driver }
+    cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app', { args: { d } }, ({ d }) => {
+        const { email } = d
         cy.clearCookies();
         cy.clearLocalStorage();
         indexedDB.deleteDatabase('firebaseLocalStorageDb');
-      //  cy.visit('https://blodplus-driver-git-develop-blod-in-team.vercel.app')
-        cy.get('input[type="text"]').type("ayush@blod.in")
+        cy.get('input[type="text"]',{ timeout: 50000 }).type(email)
         cy.get('[type="password"]').type("blodadmin")
         cy.get('#loginButton').click()
         cy.wait(5000)
@@ -50,7 +69,7 @@ Cypress.Commands.add('openRequestPage', (requestId) => {
         cy.get('tbody tr').each($el => {
             let n = $el.find('td:nth-child(1)').text()
             if (n === (reqId)) {
-                cy.wrap($el).find('#viewOrder').click()
+                cy.wrap($el).find('#viewOrder').click({force:true})
                 return false
             }
         })
@@ -59,32 +78,54 @@ Cypress.Commands.add('openRequestPage', (requestId) => {
 Cypress.Commands.add('agentArrived', (requestId) => {
     cy.openRequestPage(requestId)
     cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app', () => {
-        cy.get('#captureButton', { timeout: 15000 }).click()
+        cy.get('#captureButton', { timeout: 20000 }).click()
         cy.get('#uploadButton').click()
+        cy.get('h1').contains('Welcome back!', { timeout: 20000 })
     })
 })
-Cypress.Commands.add('sampleAcquired', (requestId) => {
+Cypress.Commands.add('sampleAcquired', (requestId, creditType) => {
     cy.openRequestPage(requestId)
-    cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app', () => {
-        cy.get('#captureButton', { timeout: 15000 }).click()
+    if (creditType != 'FullCredit') {
+        cy.collectPayment();
+    }
+    cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app',() => { 
+        cy.get('#captureButton', { timeout: 20000 }).click()
         cy.get('#nextButton').click()
         cy.get('#captureButton').click()
         cy.get('#nextButton').click()
         cy.get('#captureButton').click()
         cy.get('#uploadButton').click()
+        cy.get('h1').contains('Welcome back!', { timeout: 20000 })
     })
 })
 Cypress.Commands.add('crossMatching', (requestId) => {
     cy.openRequestPage(requestId)
     cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app', () => {
-        cy.get('#captureButton', { timeout: 15000 }).click()
+        cy.get('#captureButton', { timeout: 20000 }).click()
         cy.get('#uploadButton').click()
+        cy.get('h1').contains('Welcome back!', { timeout: 20000 })
+    })
+})
+Cypress.Commands.add('reserved', (requestId) => {
+    cy.openRequestPage(requestId)
+    cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app', () => {
+        cy.get('#captureButton', { timeout: 20000 }).click()
+        cy.get('#uploadButton').click()
+        cy.get('h1').contains('Welcome back!', { timeout: 20000 })
+    })
+})
+Cypress.Commands.add('agentAtBloodbank', (requestId) => {
+    cy.openRequestPage(requestId)
+    cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app', () => {
+        cy.get('#captureButton', { timeout: 20000 }).click()
+        cy.get('#uploadButton').click()
+        cy.get('h1').contains('Welcome back!', { timeout: 20000 })
     })
 })
 Cypress.Commands.add('issued', (requestId) => {
     cy.openRequestPage(requestId)
     cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app', () => {
-        cy.get('#captureButton', { timeout: 15000 }).click()
+        cy.get('#captureButton', { timeout: 20000 }).click()
         cy.get('#nextButton').click()
         cy.get('#captureButton').click()
         cy.get('#nextButton').click()
@@ -94,12 +135,40 @@ Cypress.Commands.add('issued', (requestId) => {
         cy.get('#nextButton').click()
         cy.get('#captureButton').click()
         cy.get('#uploadButton').click()
+        cy.get('h1').contains('Welcome back!', { timeout: 40000 })
     })
 })
-Cypress.Commands.add('delivered', (requestId) => {
+Cypress.Commands.add('delivered', (requestId,creditType,orderType) => {
     cy.openRequestPage(requestId)
-    cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app', () => {
-        cy.get('#captureButton', { timeout: 15000 }).click()
+    if (creditType != 'FullCredit' && orderType=='Reservation')
+        cy.collectPayment()
+    cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app', () => {  
+        cy.get('#captureButton', { timeout: 20000 }).click()
         cy.get('#uploadButton').click()
+        cy.get('h1').contains('Welcome back!', { timeout: 20000 })
     })
+})
+Cypress.Commands.add('collectPayment', () => {
+    cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app', () => {
+    cy.get('#collectPaymentButton').click()
+    cy.get('input[value="Cash"]').click()
+    cy.get('#paymentButton').click()
+    cy.get('.Toastify > div > div > div > div:nth-of-type(2)').contains('Payment Details Updated')
+    })
+})
+Cypress.Commands.add('getDistance', (source, destination) => {
+     source='Anna Nagar, Chennai, Tamil Nadu, India'
+    destination='V.H.S blood Bank, Pallipattu, Tharamani, Chennai, Tamil Nadu, India'
+    let apiUrl = `https://dev.blodplus.com/api/getDistance?source=${encodeURIComponent(source)}&destination=${encodeURIComponent(destination)}&type=api&token=blodadmin`;
+     cy.request('POST', apiUrl).then(function (response) {
+        return response.body.message.rows[0].elements[0].distance.text
+    })
+})
+Cypress.Commands.add('getDistances', (source, destination) => {
+    source='Anna Nagar, Chennai, Tamil Nadu, India'
+   destination='V.H.S blood Bank, Pallipattu, Tharamani, Chennai, Tamil Nadu, India'
+   let apiUrl = `https://dev.blodplus.com/api/getDistance?source=${encodeURIComponent(source)}&destination=${encodeURIComponent(destination)}&type=api&token=blodadmin`;
+    cy.request('POST', apiUrl).then(function (response) {
+    Cypress.env('DISTANCE',response.body.message.rows[0].elements[0].distance.text)
+   })
 })
