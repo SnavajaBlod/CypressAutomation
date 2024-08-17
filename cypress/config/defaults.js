@@ -12,10 +12,10 @@ const defaults = {
     DRIVER_DEPLOYMENT: 'https://blodplus-driver-git-develop-blod-in-team.vercel.app',
     HOSPITAL_TO_BLOODBANK:"",
     BLOODBANK_TO_HOSPITAL:"",
-    BLOODBANK:{'email':"brown@blod.in",'name':"Brown Blood Bank"},
+    BLOODBANK:"Brown Blood Bank",
     DRIVER:"ayush@blod.in",
     HUB:"IMAX Hospital",
-    STATUS:"Reserved",
+    STATUS:"RequestRaised",
     ITERATION:"1"
   };
   

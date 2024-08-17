@@ -43,8 +43,8 @@ export default class baseClass {
     getBloodbank(data) {
         data.bloodbankData = {}
         const bloodbank = Cypress.env("BLOODBANK")
-        data.bloodbankData.name = bloodbank.name
-        data.bloodbankData.email = bloodbank.email
+        data.bloodbankData.name = bloodbank
+     //   data.bloodbankData.email = bloodbank.email
 
         return data
     }
