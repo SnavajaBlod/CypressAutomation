@@ -69,7 +69,7 @@ export default class raiseRequest {
       this.gender().click({ force: true }).type(data.gender, { force: true }).type('{enter}')
       this.bloodGroup().click({ force: true }).type(data.bloodGroup, { force: true }).type('{enter}')
       this.bloodComponent().click({ force: true }).type(data.bloodComp, { force: true }).type('{enter}')
-      this.units().type(data.unit, { force: true })
+      this.units().type(data.units, { force: true })
       this.reason().type(data.reason, { force: true })
       this.orderType().click({ force: true }).type(data.orderType, { force: true }).type('{enter}')
       if (data.orderType != 'Emergency') {
@@ -80,7 +80,7 @@ export default class raiseRequest {
         this.deliveryDate().click({ force: true }).type('{downarrow}{downarrow}{enter}')
         this.deliveryTime().click({ force: true }).type('05:35')
       }
-      this.hospitalContact.type(data.hospitalContact,{ force: true })
+      this.hospitalContact().type(data.hospitalContact,{ force: true })
       this.submitButton().contains('Submit Details').click()
       this.confirmPriceButton().click()
       this.requestRaisedModal().then((text) => {

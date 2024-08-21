@@ -24,6 +24,7 @@ describe('Flat Package - E2E Positive Cases', function () {
             prefBloodbanks.forEach(prefBloodbank => {
                 it(`[${orderType} Order] [${creditType}] [Preferred Bloodbank-${prefBloodbank}] `, function () {
                     let hospital = base.getHospital(creditType, prefBloodbank)
+                    
                     cy.getDistances('asd','fdsa').then(()=>
                         {
                         dist=Cypress.env('DISTANCE')

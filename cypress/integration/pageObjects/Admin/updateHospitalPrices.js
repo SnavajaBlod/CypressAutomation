@@ -112,31 +112,19 @@ export default class updateBloodbankPrices {
             cy.get(':nth-child(2) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(4) > .sc-gLXSEc > [style="display: flex; gap: 0px; align-items: center; border: 1px solid var(--gray-300, #d0d5dd); border-radius: 0.25rem;"] > .sc-pFPEP').invoke('val').then(amount => {
                 values['reservationAmount'] = amount
             })
-            cy.get(':nth-child(2) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(7) > .sc-gLXSEc > [style="display: flex; gap: 0px;"] > #amount').invoke('val').then(amount => {
-                values['reservationDiscount'] = amount
-            })
-            cy.get(':nth-child(2) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(7) > .sc-gLXSEc > [style="display: flex; gap: 0px;"] > #type > .css-wokzkm-control').then(amount => {
-                values['reservationDiscountUnit'] = amount.text()
-            })
+           
+           
             cy.get(':nth-child(3) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(4) > .sc-gLXSEc > [style="display: flex; gap: 0px; align-items: center; border: 1px solid var(--gray-300, #d0d5dd); border-radius: 0.25rem;"] > .sc-pFPEP').invoke('val').then(amount => {
                 values['regularAmount'] = amount
             })
-            cy.get(':nth-child(3) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(7) > .sc-gLXSEc > [style="display: flex; gap: 0px;"] > #amount').invoke('val').then(amount => {
-                values['regularDiscount'] = amount
-            })
-            cy.get(':nth-child(3) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(7) > .sc-gLXSEc > [style="display: flex; gap: 0px;"] > #type > .css-wokzkm-control').then(amount => {
-                values['regularDiscountUnit'] = amount.text()
-            })
+           
+         
             cy.get(':nth-child(4) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(4) > .sc-gLXSEc > [style="display: flex; gap: 0px; align-items: center; border: 1px solid var(--gray-300, #d0d5dd); border-radius: 0.25rem;"] > .sc-pFPEP').invoke('val').then(amount => {
                 values['cancellationAmount'] = amount
-            })
-            cy.get(':nth-child(4) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(7) > .sc-gLXSEc > [style="display: flex; gap: 0px;"] > #amount').invoke('val').then(amount => {
-                values['cancellationDiscount'] = amount
-            })
-            cy.get(':nth-child(4) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(7) > .sc-gLXSEc > [style="display: flex; gap: 0px;"] > #type > .css-wokzkm-control').then(amount => {
-                values['cancellationDiscountUnit'] = amount.text()
                 resolve(values)
             })
+           
+           
         })
     }
 

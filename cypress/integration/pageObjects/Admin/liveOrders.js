@@ -74,8 +74,9 @@ export default class liveOrders {
     })
     return new Cypress.Promise((resolve, reject) => {
       this.actionsButton().click();
-      this.approveInvoiceButton().click()
-      cy.get('.Toastify div div div div:nth-child(2)', { timeout: 20000 }).contains('Delivery Set To Completed')
+      this.approveInvoiceButton().click().then(()=>{
+        cy.get('.Toastify div div div div:nth-child(2)', { timeout: 20000 }).contains('Delivery Set To Completed')
+      })
       resolve()
     })
   }

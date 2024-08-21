@@ -28,57 +28,64 @@ describe('Simulate Request', function () {
                     it(`[${orderType}] [${creditType}] [Preferred Bloodbank-${prefBloodbank}] [Till: ${status}] `, function () {
                         if (orderType != 'Reservation' && ['Reserved', 'ReservationApproved', 'AgentAtBloodbank'].includes(status))
                             assert.fail("State not present for the selected order type")
+                        let orderData
+                        cy.loginToApplication(admin)
                         cy.importPages().then(pages => {
-                        let orderData = base.setInitialData(this.data,pages, orderType, creditType, prefBloodbank)
-                        cy.loginToApplication(orderData.hospitalData.email)
-                        
-                            pages.raiseRequest.placeOrder(orderData).then(data => {
-                                orderData = data
-                                if (status == 'RequestRaised')
-                                    return
+                            base.setInitialData(this.data, pages, orderType, creditType, prefBloodbank).then((data) => {
+                               return orderData = base.getInvoiceValues(data)
+                            }).then(()=>{
                                 cy.logoutOfApplication();
-                                cy.loginToApplication(admin);
-                                pages.driverMapping.mapDriver(orderData.requestId, orderData.bloodbankData.name, driver, hub)
-                                if (status == 'BloodbankAccepted')
-                                    return
-                                cy.visit(driverAppLink)
-                                cy.loginToDriverApp(driver)
-                                cy.agentArrived(orderData.requestId + "-a")
-                                if (status == 'AgentArrived')
-                                    return
-                                cy.sampleAcquired(orderData.requestId + "-a", orderData.hospitalData.creditType)
-                                if (status == 'SampleAcquired')
-                                    return
-                                cy.crossMatching(orderData.requestId + "-a")
-                                if (status == 'CrossMatching')
-                                    return
-                                if (orderData.orderType == 'Reservation') {
-                                    cy.reserved(orderData.requestId + "-a")
-                                    if (status == 'Reserved')
+                                cy.loginToApplication(orderData.hospitalData.email)
+                                pages.raiseRequest.placeOrder(orderData).then(data => {
+                                    orderData = data
+                                    if (status == 'RequestRaised')
                                         return
-                                    cy.visit(appLink)
                                     cy.logoutOfApplication();
-                                    cy.loginToApplication(orderData.hospitalData.email)
-                                    pages.hPendingActions.approveReservation('2')
-                                    if (status == 'ReservationApproved')
+                                    cy.loginToApplication(admin);
+                                    pages.driverMapping.mapDriver(orderData.requestId, orderData.bloodbankData.name, driver, hub)
+                                    if (status == 'BloodbankAccepted')
                                         return
                                     cy.visit(driverAppLink)
                                     cy.loginToDriverApp(driver)
-                                    cy.agentAtBloodbank(orderData.requestId + "-a")
-                                    if (status == 'AgentAtBloodbank')
+                                    cy.agentArrived(orderData.requestId + "-a")
+                                    if (status == 'AgentArrived')
                                         return
-                                }
-                                cy.issued(orderData.requestId + "-a")
-                                if (status == 'Issued')
-                                    return
-                                cy.delivered(orderData.requestId + "-a", orderData.hospitalData.creditType, orderData.orderType)
-                                if (status == 'Delivered')
-                                    return
-                                cy.visit(appLink)
-                                cy.logoutOfApplication();
-                                cy.loginToApplication(admin)
-                                pages.liveOrders.approveInvoice(orderData.requestId)
+                                    cy.sampleAcquired(orderData.requestId + "-a", orderData.hospitalData.creditType)
+                                    if (status == 'SampleAcquired')
+                                        return
+                                    cy.crossMatching(orderData.requestId + "-a")
+                                    if (status == 'CrossMatching')
+                                        return
+                                    if (orderData.orderType == 'Reservation') {
+                                        cy.reserved(orderData.requestId + "-a")
+                                        if (status == 'Reserved')
+                                            return
+                                        cy.visit(appLink)
+                                        cy.logoutOfApplication();
+                                        cy.loginToApplication(orderData.hospitalData.email)
+                                        pages.hPendingActions.approveReservation('2')
+                                        if (status == 'ReservationApproved')
+                                            return
+                                        cy.visit(driverAppLink)
+                                        cy.loginToDriverApp(driver)
+                                        cy.agentAtBloodbank(orderData.requestId + "-a")
+                                        if (status == 'AgentAtBloodbank')
+                                            return
+                                    }
+                                    cy.issued(orderData.requestId + "-a")
+                                    if (status == 'Issued')
+                                        return
+                                    cy.delivered(orderData.requestId + "-a", orderData.hospitalData.creditType, orderData.orderType)
+                                    if (status == 'Delivered')
+                                        return
+                                    cy.visit(appLink)
+                                    cy.logoutOfApplication();
+                                    cy.loginToApplication(admin)
+                                    pages.liveOrders.approveInvoice(orderData.requestId)
+                                })
                             })
+                       
+                           
                         })
                     })
                     i++
