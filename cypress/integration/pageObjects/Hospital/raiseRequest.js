@@ -39,6 +39,9 @@ export default class raiseRequest {
   deliveryDate() {
     return cy.get('#EstimatedDeliveryDay div:nth-child(2) input')
   }
+  hospitalContact(){
+    return cy.get('#POCContact')
+  }
   submitButton() {
     return cy.get('button span').contains('Submit Details')
   }
@@ -77,6 +80,7 @@ export default class raiseRequest {
         this.deliveryDate().click({ force: true }).type('{downarrow}{downarrow}{enter}')
         this.deliveryTime().click({ force: true }).type('05:35')
       }
+      this.hospitalContact.type(data.hospitalContact,{ force: true })
       this.submitButton().contains('Submit Details').click()
       this.confirmPriceButton().click()
       this.requestRaisedModal().then((text) => {

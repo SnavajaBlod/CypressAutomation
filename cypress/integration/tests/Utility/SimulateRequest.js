@@ -28,9 +28,10 @@ describe('Simulate Request', function () {
                     it(`[${orderType}] [${creditType}] [Preferred Bloodbank-${prefBloodbank}] [Till: ${status}] `, function () {
                         if (orderType != 'Reservation' && ['Reserved', 'ReservationApproved', 'AgentAtBloodbank'].includes(status))
                             assert.fail("State not present for the selected order type")
-                        let orderData = base.setOrderData(this.data, orderType, creditType, prefBloodbank)
-                        cy.loginToApplication(orderData.hospitalData.email)
                         cy.importPages().then(pages => {
+                        let orderData = base.setInitialData(this.data,pages, orderType, creditType, prefBloodbank)
+                        cy.loginToApplication(orderData.hospitalData.email)
+                        
                             pages.raiseRequest.placeOrder(orderData).then(data => {
                                 orderData = data
                                 if (status == 'RequestRaised')

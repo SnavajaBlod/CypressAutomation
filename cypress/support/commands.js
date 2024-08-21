@@ -28,6 +28,9 @@ import driverMappingPage from "../integration/pageObjects/Admin/driverMapping"
 import liveOrdersPage from "../integration/pageObjects/Admin/liveOrders"
 import bloodbankPricesPage from "../integration/pageObjects/Admin/updateBloodbankPrices"
 import hPendingActionsPage from "../integration/pageObjects/Hospital/pendingActions"
+import bloodbankListPage from  "../integration/pageObjects/Admin/bloodbankList"
+import hospitalListPage from "../integration/pageObjects/Admin/hospitalList"
+import hospitalPricesPage from "../integration/pageObjects/Admin/updateHospitalPrices"
 
 Cypress.Commands.add('importPages', () => {
     return {
@@ -35,7 +38,10 @@ Cypress.Commands.add('importPages', () => {
         driverMapping: new driverMappingPage(),
         liveOrders: new liveOrdersPage(),
         hPendingActions: new hPendingActionsPage(),
-        bloodbankPrices: new bloodbankPricesPage()
+        bloodbankPrices: new bloodbankPricesPage(),
+        bloodbankList: new bloodbankListPage(),
+        hospitalList: new hospitalListPage(),
+        hospitalPrices: new hospitalPricesPage()
     }
 })
 Cypress.Commands.add('loginToApplication', (email) => {
@@ -156,19 +162,13 @@ Cypress.Commands.add('collectPayment', () => {
     cy.get('.Toastify > div > div > div > div:nth-of-type(2)').contains('Payment Details Updated')
     })
 })
-Cypress.Commands.add('getDistance', (source, destination) => {
-     source='Anna Nagar, Chennai, Tamil Nadu, India'
-    destination='V.H.S blood Bank, Pallipattu, Tharamani, Chennai, Tamil Nadu, India'
+Cypress.Commands.add('getDistances', (source, destination) => {
+ //    source='Anna Nagar, Chennai, Tamil Nadu, India'
+ //   destination='V.H.S blood Bank, Pallipattu, Tharamani, Chennai, Tamil Nadu, India'
     let apiUrl = `https://dev.blodplus.com/api/getDistance?source=${encodeURIComponent(source)}&destination=${encodeURIComponent(destination)}&type=api&token=blodadmin`;
      cy.request('POST', apiUrl).then(function (response) {
+        console.log(response.body)
         return response.body.message.rows[0].elements[0].distance.text
     })
 })
-Cypress.Commands.add('getDistances', (source, destination) => {
-    source='Anna Nagar, Chennai, Tamil Nadu, India'
-   destination='V.H.S blood Bank, Pallipattu, Tharamani, Chennai, Tamil Nadu, India'
-   let apiUrl = `https://dev.blodplus.com/api/getDistance?source=${encodeURIComponent(source)}&destination=${encodeURIComponent(destination)}&type=api&token=blodadmin`;
-    cy.request('POST', apiUrl).then(function (response) {
-    Cypress.env('DISTANCE',response.body.message.rows[0].elements[0].distance.text)
-   })
-})
+
