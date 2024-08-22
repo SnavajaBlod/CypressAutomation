@@ -31,6 +31,7 @@ import hPendingActionsPage from "../integration/pageObjects/Hospital/pendingActi
 import bloodbankListPage from  "../integration/pageObjects/Admin/bloodbankList"
 import hospitalListPage from "../integration/pageObjects/Admin/hospitalList"
 import hospitalPricesPage from "../integration/pageObjects/Admin/updateHospitalPrices"
+import orderImagesPage from "../integration/pageObjects/Admin/orderImages"
 
 Cypress.Commands.add('importPages', () => {
     return {
@@ -41,7 +42,8 @@ Cypress.Commands.add('importPages', () => {
         bloodbankPrices: new bloodbankPricesPage(),
         bloodbankList: new bloodbankListPage(),
         hospitalList: new hospitalListPage(),
-        hospitalPrices: new hospitalPricesPage()
+        hospitalPrices: new hospitalPricesPage(),
+        orderImages:new orderImagesPage()
     }
 })
 Cypress.Commands.add('loginToApplication', (email) => {

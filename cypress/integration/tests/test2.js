@@ -25,7 +25,9 @@ describe('Flat Package - E2E Positive Cases', function () {
         creditTypes.forEach(creditType => {
             prefBloodbanks.forEach(prefBloodbank => {
                 it('should upload an image file successfully', () => {
-                    base.getInvoiceValues
+                   let am={a:'10'}
+                   let bm={a:10}
+                    expect(am).deep.equal(bm)
                 });
             })
         })

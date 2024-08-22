@@ -26,33 +26,40 @@ describe('Flat Package - E2E Positive Cases', function () {
                     cy.loginToApplication(admin);
                     cy.importPages().then(pages => {
                         base.setInitialData(this.data, pages, orderType, creditType, prefBloodbank).then((data) => {
-                            orderData = base.getInvoiceValues(data)
-                            base.pdfFunction()
+                            return orderData = base.getInvoiceValues(data)
+                        }).then(()=>{
+                            cy.logoutOfApplication()
+                            cy.loginToApplication(orderData.hospitalData.email)
+                            return pages.raiseRequest.placeOrder(orderData)
+                        }).then((data)=>{
+                            orderData=data
+                            cy.logoutOfApplication();
+                            cy.loginToApplication(admin);
+                            return pages.driverMapping.mapDriver(orderData.requestId, orderData.bloodbankData.name, driver, hub)
+                        }).then(()=>{
+                            pages.orderImages.agentArrived(orderData.requestId)
+                            pages.liveOrders.validatePresenceOfDocs(orderData.requestId)
+                            pages.liveOrders.viewDetailsPaymentInfo(orderData.requestId).then(values => {
+                                cy.then(() => {
+                                   // for (const [key, value] of Object.entries(values)) { console.log(`${key}: ${value}`); }
+                                   // for (const [key, value] of Object.entries(orderData.paymentDetails)) { console.log(`${key}: ${value}`); }
+                                    expect(values).deep.equal(orderData.paymentDetails)
+                                })
+                            })
+                            //verify view details
+                            //verify invoices
+                            //verify sample acquired amount
+
+                            // pages.orderImages.sampleAcquired(orderData.requestId,orderData.hospitalData.creditType)
+                           // pages.orderImages.crossMatching(orderData.requestId)
+                           // pages.orderImages.issued(orderData.requestId)
+                           // pages.orderImages.delivered(orderData.requestId,orderData.hospitalData.creditType,orderData.orderType)
                         })
                     })
-                    // cy.logoutOfApplication();
-                    //cy.loginToApplication(orderData.hospitalData.email)
-                    // pages.raiseRequest.placeOrder(orderData).then(data => {
-                    //    return orderData = data
-                    //})
+                   
                 })
-                /*   cy.loginToApplication(orderData.hospitalData.email)
-                   cy.importPages().then(pages => {
-                       pages.raiseRequest.placeOrder(orderData).then(data => {
-                           return orderData = data
-                       }).then(() => { //map driver, get bloodbank details
-                           cy.logoutOfApplication();
-                           cy.loginToApplication(admin);
-                           pages.driverMapping.mapDriver(orderData.requestId, orderData.bloodbankData.name, driver, hub)
-                           return pages.bloodbankPrices.getBloodbankPrices(orderData).then((data) => {
-                               orderData = data
-                           })
-                       }).then(() => { //get bloodbank address
-                           //get bloodbank address
-                           //get hospital address
-                           //get hospital details
-                          
-                       })
+                /*  
+                         
  
                          pages.liveOrders.viewDetailsPaymentInfo(orderData.requestId).then(values => {
                              cy.then(() => {

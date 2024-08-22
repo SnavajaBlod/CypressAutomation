@@ -1,6 +1,6 @@
 
 export default class baseClass {
-   
+
     convertToArray(input) {
         if (!Array.isArray(input))
             input = [input]
@@ -51,7 +51,7 @@ export default class baseClass {
 
         return data
     }
-    assignDataValues(input, bloodbank, hospital, bbPricing, hospPricing, a, b) {
+    assignDataValues(input, bloodbank, hospital, bbPricing, hospPricing) {
         input.bloodbankData.email = bloodbank.email
         input.bloodbankData.address = bloodbank.address
         input.hospitalData.email = hospital.email
@@ -119,9 +119,9 @@ export default class baseClass {
         return orderData
     }
     flatPlatformPackage(data) {
-        let bloodbankTotal, blodTotal, platformFeeBeforeTax, platformFeeAfterTax, platformFeeCSGST,platformFeeBeforeDiscount
-        let deliveryBaseBeforeTax, deliveryBaseAfterTax, deliveryBaseCSGST,deliveryBaseBeforeDiscount
-        let deliveryAfterTax, deliveryBeforeTax, deliveryCSGST, totalDistance,deliveryBeforeDiscount
+        let bloodbankTotal, blodTotal, platformFeeBeforeTax, platformFeeAfterTax, platformFeeCSGST, platformFeeBeforeDiscount
+        let deliveryBaseBeforeTax, deliveryBaseAfterTax, deliveryBaseCSGST, deliveryBaseBeforeDiscount
+        let deliveryAfterTax, deliveryBeforeTax, deliveryCSGST, totalDistance, deliveryBeforeDiscount
         let values = {}
         let states = ['Request Raised', 'Blood Bank Accepted', 'Agent Arrived', 'Sample Acquired', 'Cross Matching', 'Reserved']
         //bloodbank fee
@@ -150,15 +150,15 @@ export default class baseClass {
         values['totalAmount'] = (bloodbankTotal + blodTotal).toFixed(2)
         values['bloodbankTotal'] = (bloodbankTotal).toFixed(2)
         values['blodTotal'] = (blodTotal).toFixed(2)
-        values['platformFeeBD']=(platformFeeBeforeDiscount).toFixed(2)
+        values['platformFeeBD'] = (platformFeeBeforeDiscount).toFixed(2)
         values['platformFeeBT'] = (platformFeeBeforeTax).toFixed(2)
         values['platformFeeAT'] = (platformFeeAfterTax).toFixed(2)
         values['platformFeeTax'] = (platformFeeCSGST).toFixed(2)
-        values['deliveryBaseBD']=(deliveryBaseBeforeDiscount).toFixed(2)
+        values['deliveryBaseBD'] = (deliveryBaseBeforeDiscount).toFixed(2)
         values['deliveryBaseBT'] = (deliveryBaseBeforeTax).toFixed(2)
         values['deliveryBaseAT'] = (deliveryBaseAfterTax).toFixed(2)
         values['deliveryBaseTax'] = (deliveryBaseCSGST).toFixed(2)
-        values['deliveryDistanceBD']=(deliveryBeforeDiscount).toFixed(2)
+        values['deliveryDistanceBD'] = (deliveryBeforeDiscount).toFixed(2)
         values['deliveryDistanceBT'] = (deliveryBeforeTax).toFixed(2)
         values['deliveryDistanceAT'] = (deliveryAfterTax).toFixed(2)
         values['deliveryDistanceTax'] = (deliveryCSGST).toFixed(2)
@@ -194,18 +194,18 @@ export default class baseClass {
         platformFeeAfterTax = platformFeeBeforeTax * 1.18
         blodTotal = platformFeeAfterTax + deliveryBaseAfterTax + deliveryAfterTax
         //assign values
-        values['totalAmount'] = bloodbankTotal + blodTotal
-        values['bloodbankTotal'] = bloodbankTotal
-        values['blodTotal'] = blodTotal
-        values['platformFeeBT'] = platformFeeBeforeTax
-        values['platformFeeAT'] = platformFeeAfterTax
-        values['platformFeeTax'] = platformFeeCSGST
-        values['deliveryBaseBT'] = deliveryBaseBeforeTax
-        values['deliveryBaseAT'] = deliveryBaseAfterTax
-        values['deliveryBaseTax'] = deliveryBaseCSGST
-        values['deliveryDistanceBT'] = deliveryBeforeTax
-        values['deliveryDistanceAT'] = deliveryAfterTax
-        values['deliveryDistanceTax'] = deliveryCSGST
+        values['totalAmount'] = (bloodbankTotal + blodTotal).toFixed(2)
+        values['bloodbankTotal'] = (bloodbankTotal).toFixed(2)
+        values['blodTotal'] = (blodTotal).toFixed(2)
+        values['platformFeeBT'] = (platformFeeBeforeTax).toFixed(2)
+        values['platformFeeAT'] = (platformFeeAfterTax).toFixed(2)
+        values['platformFeeTax'] = (platformFeeCSGST).toFixed(2)
+        values['deliveryBaseBT'] = (deliveryBaseBeforeTax).toFixed(2)
+        values['deliveryBaseAT'] = (deliveryBaseAfterTax).toFixed(2)
+        values['deliveryBaseTax'] = (deliveryBaseCSGST).toFixed(2)
+        values['deliveryDistanceBT'] = (deliveryBeforeTax).toFixed(2)
+        values['deliveryDistanceAT'] = (deliveryAfterTax).toFixed(2)
+        values['deliveryDistanceTax'] = (deliveryCSGST).toFixed(2)
         data.invoiceDetails = values
         return data
     }
@@ -223,11 +223,11 @@ export default class baseClass {
         blodAmountAfterTax = totalAmount - bloodbankTotal
         blodAmountBeforeTax = blodAmountAfterTax / 1.18
         blodAmountCSGST = blodAmountBeforeTax * 0.09
-        values['totalAmount'] = bloodbankTotal + blodAmountAfterTax
-        values['bloodbankTotal'] = bloodbankTotal
-        values['blodTotal'] = blodAmountAfterTax
-        values['blodAmountTax'] = blodAmountCSGST
-        values['blodAmountBT'] = blodAmountBeforeTax
+        values['totalAmount'] =(bloodbankTotal + blodAmountAfterTax).toFixed(2)
+        values['bloodbankTotal'] = (bloodbankTotal).toFixed(2)
+        values['blodTotal'] = (blodAmountAfterTax).toFixed(2)
+        values['blodAmountTax'] = (blodAmountCSGST).toFixed(2)
+        values['blodAmountBT'] = (blodAmountBeforeTax).toFixed(2)
         data.invoiceDetails = values
         return data
     }
@@ -241,42 +241,65 @@ export default class baseClass {
     assignCredits(data) {
         let values = {}
         if (data.hospitalData.creditType === 'FullCredit') {
-            values['Total'] = data.invoiceDetails.totalAmount
+            values['Total'] = String(Math.ceil(data.invoiceDetails.totalAmount))
+             values['Paid'] = 'N/A'
             values['Due'] = 'N/A'
-            values['Paid'] = 'N/A'
-            values['Credit'] = data.invoiceDetails.totalAmount
+            values['Credit'] = String(Math.ceil(data.invoiceDetails.totalAmount))
         }
         else if (data.hospitalData.creditType === 'BlodCredit') {
-            values['Total'] = data.invoiceDetails.totalAmount
-            values['Due'] = data.invoiceDetails.bloodbankTotal
+            values['Total'] = String(Math.ceil(data.invoiceDetails.totalAmount))
             values['Paid'] = 'N/A'
-            values['Credit'] = data.invoiceDetails.blodTotal
+            values['Due'] = String(Math.ceil(data.invoiceDetails.bloodbankTotal))
+            
+            values['Credit'] = String(Math.ceil(data.invoiceDetails.blodTotal))
         }
         else if (data.hospitalData.creditType === 'NoCredit') {
-            values['Total'] = data.invoiceDetails.totalAmount
-            values['Due'] = data.invoiceDetails.totalAmount
-            values['Paid'] = 'N/A'
+            values['Total'] = String(Math.ceil(data.invoiceDetails.totalAmount))
+             values['Paid'] = 'N/A'
+            values['Due'] = String(Math.ceil(data.invoiceDetails.totalAmount))
+           
             values['Credit'] = 'N/A'
         }
         data.paymentDetails = values
         return data
     }
-     convertPdfToText() {
+    convertPdfToText() {
         const filePath = 'C:\\Users\\VC\\Downloads\\190c845b-a-hospital-Preferred No Credit Hospital-invoice.pdf'
-        cy.task('readPdf',filePath).then(data=>{
-            let newData=data.text.replace(/\r?\n|\r/g, ' ').trim();
+        cy.task('readPdf', filePath).then(data => {
+            let newData = data.text.replace(/\r?\n|\r/g, ' ').trim();
             console.log(newData)
-     })
+        })
     }
-    getExpectedInvoice(data){
-        const str=[]
+    expectedInvoice(data) {
+        const str = []
+        let dist, totalBT, totalCSGST, totalAT,type
+        totalBT = Number(data.invoiceDetails.platformFeeBT) + Number(data.invoiceDetails.deliveryBaseBT) + Number(data.invoiceDetails.deliveryDistanceBT)
+        totalCSGST = Number(data.invoiceDetails.platformFeeTax) + Number(data.invoiceDetails.deliveryBaseTax) + Number(data.invoiceDetails.deliveryDistanceTax)
+        totalAT = Number(data.invoiceDetails.platformFeeAT) + Number(data.invoiceDetails.deliveryBaseAT) + Number(data.invoiceDetails.deliveryDistanceAT)
+        dist = Number(data.hospitalToBloodbank.split(' ')[0]) + Number(data.bloodbankToHospital.split(' ')[0]) - Number(data.hospitalData.schemeDetails.distanceThreshold)
         str.push('TAX INVOICE Address: IMAX Hospital, No.128, D Block, 1st Main road, Kilpauk Garden Road, Annanagar East, Chennai, Tamil Nadu 600102 Email ID: info@blod.in Phone No.: 9884516787 GST No.: 33AAKCB7626E1ZS PAN No.: AAKCB7626E')
         str.push('State: TAMIL NADU State Code: TN Place of Supply: CHENNAI Details of HospitalDetails of Patient')
-        str.push('Name: '+data.hospitalData.name+' Address: '+data.hospitalData.address+' State: TAMIL NADU State Code: TN GST No.: - PAN No.: - Name: '+data.name+' Age: '+data.age+' Request ID: '+data.requestId+' Patient ID: '+data.id+' Sex: '+data.gender+' Blood Group: '+data.bloodGroup+' Blood Component: '+data.bloodComp+' No. of units: '+data.units+' Reason: '+data.reason+' Sr. No Description of Goods/Services HSN/SAC Code QuantityUOM Total Before Tax (INR) CGSTSGST Total Value (INR) RateAmountRateAmount')
-     //   str.push('Platform Fees9973311-'399.00'9'35.91'9'35.91'470.82') 
-      //  str.push('Delivery Protocol Base Fee 996519'2'Data Points '354.000.00'9'0.00'9'0.00'0.00')
-       // ('Delivery Protocol Distance Fee 9965194.4Data Points 103.840.0090.0090.000.00')
-       // 'Details for Transfer of Funds in INRTotal Amount Before TaxINR 399.00 Total SGSTINR 35.91 Total CGSTINR 35.91 Total AmountINR 470.82 Total Amount (Rounded Off)INR 471.00' 
-       // 'Prepared By BLODIN PVT LTDChecked By & Date: 16/08/2024 Terms and Conditions www.blod.in/tnp'
+        str.push('Name: ' + data.hospitalData.name + ' Address: ' + data.hospitalData.address + ' State: TAMIL NADU State Code: TN GST No.: - PAN No.: - Name: ' + data.name + ' Age: ' + data.age + ' Request ID: ' + data.requestId + ' Patient ID: ' + data.id + ' Sex: ' + data.gender + ' Blood Group: ' + data.bloodGroup + ' Blood Component: ' + data.bloodComp + ' No. of units: ' + data.units + ' Reason: ' + data.reason + ' Sr. No Description of Goods/Services HSN/SAC Code QuantityUOM Total Before Tax (INR) CGSTSGST Total Value (INR) RateAmountRateAmount')
+        if(data.hospitalData.schemeName=='Blood Flat Package')
+        {
+            type=data.orderType==='Reservation'?'Reservation':'Regular'
+            str.push('Blood Flat Package - '+type+'997331'+data.units+'-' + data.invoiceDetails.blodAmountBT + '9' + data.invoiceDetails.blodAmountTax + '9' + data.invoiceDetails.blodAmountTax + data.invoiceDetails.blodTotal)
+            str.push('Details for Transfer of Funds in INRTotal Amount Before TaxINR ' + data.invoiceDetails.blodAmountBT + ' Total SGSTINR ' + data.invoiceDetails.blodAmountTax + ' Total CGSTINR ' + data.invoiceDetails.blodAmountTax + ' Total AmountINR ' + data.invoiceDetails.blodTotal + ' Total Amount (Rounded Off)INR ' + (Math.ceil(data.invoiceDetails.blodTotal)).toFixed(2))
+            return str
+        }
+        if (data.hospitalData.schemeDetails.platformDiscount === '0')
+            str.push('Platform Fees9973311-' + data.invoiceDetails.platformFeeBT + '9' + data.invoiceDetails.platformFeeTax + '9' + data.invoiceDetails.platformFeeTax + data.invoiceDetails.platformFeeAT)
+        else
+            str.push('Platform Fees9973311-' + data.invoiceDetails.platformFeeBD + data.invoiceDetails.platformFeeBT + '9' + data.invoiceDetails.platformFeeTax + '9' + data.invoiceDetails.platformFeeTax + data.invoiceDetails.platformFeeAT)
+        if (data.hospitalData.schemeDetails.deliveryBaseDiscount === '0')
+            str.push('Delivery Protocol Base Fee 996519' + data.hospitalData.schemeDetails.distanceThreshold + 'Data Points ' + data.invoiceDetails.deliveryBaseBT + '9' + data.invoiceDetails.deliveryBaseTax + '9' + data.invoiceDetails.deliveryBaseTax + data.invoiceDetails.deliveryBaseAT)
+        else
+            str.push('Delivery Protocol Base Fee 996519' + data.hospitalData.schemeDetails.distanceThreshold + 'Data Points ' + data.invoiceDetails.deliveryBaseBD + data.invoiceDetails.deliveryBaseBT + '9' + data.invoiceDetails.deliveryBaseTax + '9' + data.invoiceDetails.deliveryBaseTax + data.invoiceDetails.deliveryBaseAT)
+        if (data.hospitalData.schemeDetails.deliveryDiscount === '0')
+            str.push('Delivery Protocol Distance Fee 996519' + dist + 'Data Points ' + data.invoiceDetails.deliveryDistanceBT + '9' + data.invoiceDetails.deliveryDistanceTax + '9' + data.invoiceDetails.deliveryDistanceTax + data.invoiceDetails.deliveryDistanceAT)
+        else
+            str.push('Delivery Protocol Distance Fee 996519' + dist + 'Data Points ' + data.invoiceDetails.deliveryDistanceBD + data.invoiceDetails.deliveryDistanceBT + '9' + data.invoiceDetails.deliveryDistanceTax + '9' + data.invoiceDetails.deliveryDistanceTax + data.invoiceDetails.deliveryDistanceAT)
+        str.push('Details for Transfer of Funds in INRTotal Amount Before TaxINR ' + totalBT + ' Total SGSTINR ' + totalCSGST + ' Total CGSTINR ' + totalCSGST + ' Total AmountINR ' + totalAT + ' Total Amount (Rounded Off)INR ' + (Math.ceil(totalAT)).toFixed(2))
+        return str
     }
 }

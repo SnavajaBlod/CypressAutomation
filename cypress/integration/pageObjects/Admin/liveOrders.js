@@ -23,6 +23,13 @@ export default class liveOrders {
   {
     return cy.get('button').contains('Approve Invoice')
   }
+  downloadOrderSummary()
+  {
+    return cy.get('button').contains('Download Order Summary')
+  }
+  downloadInvoices(){
+    return cy.get('button').contains('Download Invoices')
+  }
   searchBar()
   {
     return cy.get('#global-filter')
@@ -44,19 +51,19 @@ export default class liveOrders {
       let values = {}
       this.viewDetailsTotal().then((text) => {
         let totalAmount = text.text().trim();
-        values['total'] = totalAmount
+        values['Total'] = totalAmount
       });
       this.viewDetailsPaid().then((text) => {
         let paidAmount = text.text().trim();
-        values['paid'] = paidAmount
+        values['Paid'] = paidAmount
       });
       this.viewDetailsDue().then((text) => {
         let dueAmount = text.text().trim();
-        values['due'] = dueAmount
+        values['Due'] = dueAmount
       });
       this.viewDetailsCredit().then((text) => {
         let creditAmount = text.text().trim();
-        values['credit'] = creditAmount
+        values['Credit'] = creditAmount
       });
       resolve(values);
     })
@@ -67,7 +74,7 @@ export default class liveOrders {
     cy.get('span').then(($spans) => {
       const dashboardSpan = $spans.toArray().find(span => span.innerText.includes('Dashboard'));
       if (dashboardSpan) {
-        cy.wrap($dashboard).click();
+        cy.wrap(dashboardSpan).click();
       }
       cy.get('#liveorders').click({ force: true });
       this.searchBar().type(requestId)
@@ -80,6 +87,19 @@ export default class liveOrders {
       resolve()
     })
   }
-
+validatePresenceOfDocs(requestId)
+{
+  cy.get('span').then(($spans) => {
+    const dashboardSpan = $spans.toArray().find(span => span.innerText.includes('Dashboard'));
+    if (dashboardSpan) {
+      cy.wrap(dashboardSpan).click();
+    }
+    cy.get('#liveorders').click({ force: true });
+    this.searchBar().type(requestId)
+  })
+    this.actionsButton().click();
+   cy.get('button').contains('Download Invoices')
+   cy.get('button').contains('Download Order Summary')
+}
 
 }
