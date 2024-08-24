@@ -37,34 +37,34 @@ export default class updateBloodbankPrices {
     flatPlatformPackage() {
         let values = {}
         return new Cypress.Promise((resolve) => {
-            cy.get(':nth-child(2) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(4) > .sc-gLXSEc > [style="display: flex; gap: 0px; align-items: center; border: 1px solid var(--gray-300, #d0d5dd); border-radius: 0.25rem;"] > .sc-pFPEP').invoke('val').then(amount => {
+            cy.get('#amount-Charge0 div > div > input').invoke('val').then(amount => {
                 values['platformAmount'] = amount
             })
-            cy.get(':nth-child(2) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(7) > .sc-gLXSEc > [style="display: flex; gap: 0px;"] > #amount').invoke('val').then(amount => {
+            cy.get('#discount-Charge0 div > div > input').invoke('val').then(amount => {
                 values['platformDiscount'] = amount
             })
-            cy.get(':nth-child(2) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(7) > .sc-gLXSEc > [style="display: flex; gap: 0px;"] > #type > .css-wokzkm-control').then(amount => {
+            cy.get('#discount-Charge0 > div > div > div > div > div:nth-of-type(1) > div:nth-of-type(1)').then(amount => {
                 values['platformDiscountUnit'] = amount.text()
             })
-            cy.get(':nth-child(3) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(4) > .sc-gLXSEc > [style="display: flex; gap: 0px; align-items: center; border: 1px solid var(--gray-300, #d0d5dd); border-radius: 0.25rem;"] > .sc-pFPEP').invoke('val').then(amount => {
+            cy.get('#amount-Charge1 div > div > input').invoke('val').then(amount => {
                 values['deliveryBaseAmount'] = amount
             })
-            cy.get(':nth-child(3) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(7) > .sc-gLXSEc > [style="display: flex; gap: 0px;"] > #amount').invoke('val').then(amount => {
+            cy.get('#discount-Charge1 div > div > input').invoke('val').then(amount => {
                 values['deliveryBaseDiscount'] = amount
             })
-            cy.get(':nth-child(3) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(7) > .sc-gLXSEc > [style="display: flex; gap: 0px;"] > #type > .css-wokzkm-control').then(amount => {
+            cy.get('#discount-Charge1 > div > div > div > div > div:nth-of-type(1) > div:nth-of-type(1)').then(amount => {
                 values['deliveryBaseDiscountUnit'] = amount.text()
             })
-            cy.get(':nth-child(4) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(4) > .sc-gLXSEc > [style="display: flex; gap: 0px; align-items: center; border: 1px solid var(--gray-300, #d0d5dd); border-radius: 0.25rem;"] > .sc-pFPEP').invoke('val').then(amount => {
+            cy.get('#amount-Charge2 div > div > input').invoke('val').then(amount => {
                 values['deliveryAmount'] = amount
             })
-            cy.get(':nth-child(4) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(7) > .sc-gLXSEc > [style="display: flex; gap: 0px;"] > #amount').invoke('val').then(amount => {
+            cy.get('#discount-Charge2 div > div > input').invoke('val').then(amount => {
                 values['deliveryDiscount'] = amount
             })
-            cy.get(':nth-child(4) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(7) > .sc-gLXSEc > [style="display: flex; gap: 0px;"] > #type > .css-wokzkm-control').then(amount => {
+            cy.get('#discount-Charge2 > div > div > div > div > div:nth-of-type(1) > div:nth-of-type(1)').then(amount => {
                 values['deliveryDiscountUnit'] = amount.text()
             })
-            cy.get(':nth-child(2) > :nth-child(2) > .sc-gLXSEc > .sc-euGpHm').invoke('val').then(amount => {
+            cy.get('#constraintValue0').invoke('val').then(amount => {
                 values['distanceThreshold'] = amount
                 resolve(values)
             })
@@ -73,34 +73,34 @@ export default class updateBloodbankPrices {
     deprecatedPlatformPackage() {
         let values = {}
         return new Cypress.Promise((resolve) => {
-            cy.get(':nth-child(2) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(4) > .sc-gLXSEc > [style="display: flex; gap: 0px; align-items: center; border: 1px solid var(--gray-300, #d0d5dd); border-radius: 0.25rem;"] > .sc-pFPEP').invoke('val').then(amount => {
+            cy.get('#amount-Charge0 div > div > input').invoke('val').then(amount => {
                 values['platformPercent'] = amount
             })
-            cy.get(':nth-child(2) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(7) > .sc-gLXSEc > [style="display: flex; gap: 0px;"] > #amount').invoke('val').then(amount => {
+            cy.get('#discount-Charge0 div > div > input').invoke('val').then(amount => {
                 values['platformDiscount'] = amount
             })
-            cy.get(':nth-child(2) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(7) > .sc-gLXSEc > [style="display: flex; gap: 0px;"] > #type > .css-wokzkm-control').then(amount => {
+            cy.get('#discount-Charge0 > div > div > div > div > div:nth-of-type(1) > div:nth-of-type(1)').then(amount => {
                 values['platformDiscountUnit'] = amount.text()
             })
-            cy.get(':nth-child(3) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(4) > .sc-gLXSEc > [style="display: flex; gap: 0px; align-items: center; border: 1px solid var(--gray-300, #d0d5dd); border-radius: 0.25rem;"] > .sc-pFPEP').invoke('val').then(amount => {
+            cy.get('#amount-Charge1 div > div > input').invoke('val').then(amount => {
                 values['deliveryBaseAmount'] = amount
             })
-            cy.get(':nth-child(3) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(7) > .sc-gLXSEc > [style="display: flex; gap: 0px;"] > #amount').invoke('val').then(amount => {
+            cy.get('#discount-Charge1 div > div > input').invoke('val').then(amount => {
                 values['deliveryBaseDiscount'] = amount
             })
-            cy.get(':nth-child(3) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(7) > .sc-gLXSEc > [style="display: flex; gap: 0px;"] > #type > .css-wokzkm-control').then(amount => {
+            cy.get('#discount-Charge1 > div > div > div > div > div:nth-of-type(1) > div:nth-of-type(1)').then(amount => {
                 values['deliveryBaseDiscountUnit'] = amount.text()
             })
-            cy.get(':nth-child(4) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(4) > .sc-gLXSEc > [style="display: flex; gap: 0px; align-items: center; border: 1px solid var(--gray-300, #d0d5dd); border-radius: 0.25rem;"] > .sc-pFPEP').invoke('val').then(amount => {
+            cy.get('#amount-Charge2 div > div > input').invoke('val').then(amount => {
                 values['deliveryAmount'] = amount
             })
-            cy.get(':nth-child(4) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(7) > .sc-gLXSEc > [style="display: flex; gap: 0px;"] > #amount').invoke('val').then(amount => {
+            cy.get('#discount-Charge2 div > div > input').invoke('val').then(amount => {
                 values['deliveryDiscount'] = amount
             })
-            cy.get(':nth-child(4) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(7) > .sc-gLXSEc > [style="display: flex; gap: 0px;"] > #type > .css-wokzkm-control').then(amount => {
+            cy.get('#discount-Charge2 > div > div > div > div > div:nth-of-type(1) > div:nth-of-type(1)').then(amount => {
                 values['deliveryDiscountUnit'] = amount.text()
             })
-            cy.get(':nth-child(2) > :nth-child(2) > .sc-gLXSEc > .sc-euGpHm').invoke('val').then(amount => {
+            cy.get('#constraintValue0').invoke('val').then(amount => {
                 values['distanceThreshold'] = amount
                 resolve(values)
             })
@@ -109,22 +109,16 @@ export default class updateBloodbankPrices {
     bloodFlatPackage() {
         let values = {}
         return new Cypress.Promise((resolve) => {
-            cy.get(':nth-child(2) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(4) > .sc-gLXSEc > [style="display: flex; gap: 0px; align-items: center; border: 1px solid var(--gray-300, #d0d5dd); border-radius: 0.25rem;"] > .sc-pFPEP').invoke('val').then(amount => {
+            cy.get('#amount-Charge0 div > div > input').invoke('val').then(amount => {
                 values['reservationAmount'] = amount
             })
-           
-           
-            cy.get(':nth-child(3) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(4) > .sc-gLXSEc > [style="display: flex; gap: 0px; align-items: center; border: 1px solid var(--gray-300, #d0d5dd); border-radius: 0.25rem;"] > .sc-pFPEP').invoke('val').then(amount => {
+            cy.get('#amount-Charge1 div > div > input').invoke('val').then(amount => {
                 values['regularAmount'] = amount
-            })
-           
-         
-            cy.get(':nth-child(4) > :nth-child(1) > .sc-bDbPgR > tbody > tr > :nth-child(4) > .sc-gLXSEc > [style="display: flex; gap: 0px; align-items: center; border: 1px solid var(--gray-300, #d0d5dd); border-radius: 0.25rem;"] > .sc-pFPEP').invoke('val').then(amount => {
+            })  
+            cy.get('#amount-Charge2 div > div > input').invoke('val').then(amount => {
                 values['cancellationAmount'] = amount
                 resolve(values)
             })
-           
-           
         })
     }
 

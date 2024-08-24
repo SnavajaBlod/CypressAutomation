@@ -188,7 +188,7 @@ export default class baseClass {
         deliveryCSGST = deliveryBeforeTax * 0.09
         deliveryAfterTax = deliveryBeforeTax * 1.18
         //platform fee
-        platformFeeBeforeTax = Number(data.hospitalData.schemeDetails.platformPercent) * (bloodbankTotal + deliveryBaseBeforeTax + deliveryBeforeTax)
+        platformFeeBeforeTax = (Number(data.hospitalData.schemeDetails.platformPercent)/100) * (bloodbankTotal + deliveryBaseBeforeTax + deliveryBeforeTax)
         platformFeeBeforeTax = this.applyDiscount(data.hospitalData.schemeDetails.platformDiscountUnit, platformFeeBeforeTax, Number(data.hospitalData.schemeDetails.platformDiscount))
         platformFeeCSGST = platformFeeBeforeTax * 0.09
         platformFeeAfterTax = platformFeeBeforeTax * 1.18
@@ -206,6 +206,7 @@ export default class baseClass {
         values['deliveryDistanceBT'] = (deliveryBeforeTax).toFixed(2)
         values['deliveryDistanceAT'] = (deliveryAfterTax).toFixed(2)
         values['deliveryDistanceTax'] = (deliveryCSGST).toFixed(2)
+        for (const [key, value] of Object.entries(values)) { console.log(`${key}: ${value}`); }
         data.invoiceDetails = values
         return data
     }
@@ -223,7 +224,7 @@ export default class baseClass {
         blodAmountAfterTax = totalAmount - bloodbankTotal
         blodAmountBeforeTax = blodAmountAfterTax / 1.18
         blodAmountCSGST = blodAmountBeforeTax * 0.09
-        values['totalAmount'] =(bloodbankTotal + blodAmountAfterTax).toFixed(2)
+        values['totalAmount'] = (bloodbankTotal + blodAmountAfterTax).toFixed(2)
         values['bloodbankTotal'] = (bloodbankTotal).toFixed(2)
         values['blodTotal'] = (blodAmountAfterTax).toFixed(2)
         values['blodAmountTax'] = (blodAmountCSGST).toFixed(2)
@@ -241,38 +242,39 @@ export default class baseClass {
     assignCredits(data) {
         let values = {}
         if (data.hospitalData.creditType === 'FullCredit') {
-            values['Total'] = String(Math.ceil(data.invoiceDetails.totalAmount))
-             values['Paid'] = 'N/A'
+            values['Total'] = Math.ceil(data.invoiceDetails.totalAmount)
+            values['Paid'] = 'N/A'
             values['Due'] = 'N/A'
-            values['Credit'] = String(Math.ceil(data.invoiceDetails.totalAmount))
+            values['Credit'] = Math.ceil(data.invoiceDetails.totalAmount)
         }
         else if (data.hospitalData.creditType === 'BlodCredit') {
-            values['Total'] = String(Math.ceil(data.invoiceDetails.totalAmount))
+            values['Total'] = Math.ceil(data.invoiceDetails.totalAmount)
             values['Paid'] = 'N/A'
-            values['Due'] = String(Math.ceil(data.invoiceDetails.bloodbankTotal))
-            
-            values['Credit'] = String(Math.ceil(data.invoiceDetails.blodTotal))
+            values['Due'] = Math.ceil(data.invoiceDetails.bloodbankTotal)
+            values['Credit'] = Math.ceil(data.invoiceDetails.blodTotal)
         }
         else if (data.hospitalData.creditType === 'NoCredit') {
-            values['Total'] = String(Math.ceil(data.invoiceDetails.totalAmount))
-             values['Paid'] = 'N/A'
-            values['Due'] = String(Math.ceil(data.invoiceDetails.totalAmount))
-           
+            values['Total'] = Math.ceil(data.invoiceDetails.totalAmount)
+            values['Paid'] = 'N/A'
+            values['Due'] = Math.ceil(data.invoiceDetails.totalAmount)
             values['Credit'] = 'N/A'
         }
         data.paymentDetails = values
         return data
     }
-    convertPdfToText() {
-        const filePath = 'C:\\Users\\VC\\Downloads\\190c845b-a-hospital-Preferred No Credit Hospital-invoice.pdf'
+    convertPdfToText(filePath) {
+        let newData
+        return new Cypress.Promise((resolve, reject) => {
         cy.task('readPdf', filePath).then(data => {
-            let newData = data.text.replace(/\r?\n|\r/g, ' ').trim();
-            console.log(newData)
+            newData = data.text.replace(/\r?\n|\r/g, ' ').trim();
+            resolve(newData)
         })
+    })
+
     }
     expectedInvoice(data) {
         const str = []
-        let dist, totalBT, totalCSGST, totalAT,type
+        let dist, totalBT, totalCSGST, totalAT, type,uom
         totalBT = Number(data.invoiceDetails.platformFeeBT) + Number(data.invoiceDetails.deliveryBaseBT) + Number(data.invoiceDetails.deliveryDistanceBT)
         totalCSGST = Number(data.invoiceDetails.platformFeeTax) + Number(data.invoiceDetails.deliveryBaseTax) + Number(data.invoiceDetails.deliveryDistanceTax)
         totalAT = Number(data.invoiceDetails.platformFeeAT) + Number(data.invoiceDetails.deliveryBaseAT) + Number(data.invoiceDetails.deliveryDistanceAT)
@@ -280,26 +282,28 @@ export default class baseClass {
         str.push('TAX INVOICE Address: IMAX Hospital, No.128, D Block, 1st Main road, Kilpauk Garden Road, Annanagar East, Chennai, Tamil Nadu 600102 Email ID: info@blod.in Phone No.: 9884516787 GST No.: 33AAKCB7626E1ZS PAN No.: AAKCB7626E')
         str.push('State: TAMIL NADU State Code: TN Place of Supply: CHENNAI Details of HospitalDetails of Patient')
         str.push('Name: ' + data.hospitalData.name + ' Address: ' + data.hospitalData.address + ' State: TAMIL NADU State Code: TN GST No.: - PAN No.: - Name: ' + data.name + ' Age: ' + data.age + ' Request ID: ' + data.requestId + ' Patient ID: ' + data.id + ' Sex: ' + data.gender + ' Blood Group: ' + data.bloodGroup + ' Blood Component: ' + data.bloodComp + ' No. of units: ' + data.units + ' Reason: ' + data.reason + ' Sr. No Description of Goods/Services HSN/SAC Code QuantityUOM Total Before Tax (INR) CGSTSGST Total Value (INR) RateAmountRateAmount')
-        if(data.hospitalData.schemeName=='Blood Flat Package')
-        {
-            type=data.orderType==='Reservation'?'Reservation':'Regular'
-            str.push('Blood Flat Package - '+type+'997331'+data.units+'-' + data.invoiceDetails.blodAmountBT + '9' + data.invoiceDetails.blodAmountTax + '9' + data.invoiceDetails.blodAmountTax + data.invoiceDetails.blodTotal)
+        if (data.hospitalData.schemeName == 'Blood Flat Package') {
+            type = data.orderType === 'Reservation' ? 'Reservation' : 'Regular'
+          
+            str.push('Blood Flat Package - ' + type + ' 997331' + data.units + '-' + data.invoiceDetails.blodAmountBT + '9' + data.invoiceDetails.blodAmountTax + '9' + data.invoiceDetails.blodAmountTax + data.invoiceDetails.blodTotal)
             str.push('Details for Transfer of Funds in INRTotal Amount Before TaxINR ' + data.invoiceDetails.blodAmountBT + ' Total SGSTINR ' + data.invoiceDetails.blodAmountTax + ' Total CGSTINR ' + data.invoiceDetails.blodAmountTax + ' Total AmountINR ' + data.invoiceDetails.blodTotal + ' Total Amount (Rounded Off)INR ' + (Math.ceil(data.invoiceDetails.blodTotal)).toFixed(2))
             return str
         }
+        uom=data.hospitalData.schemeName==='Flat Platform'?'-':'%'
         if (data.hospitalData.schemeDetails.platformDiscount === '0')
-            str.push('Platform Fees9973311-' + data.invoiceDetails.platformFeeBT + '9' + data.invoiceDetails.platformFeeTax + '9' + data.invoiceDetails.platformFeeTax + data.invoiceDetails.platformFeeAT)
+            str.push('Platform Fees99733111'+uom+ + data.invoiceDetails.platformFeeBT + '9' + data.invoiceDetails.platformFeeTax + '9' + data.invoiceDetails.platformFeeTax + data.invoiceDetails.platformFeeAT)
         else
-            str.push('Platform Fees9973311-' + data.invoiceDetails.platformFeeBD + data.invoiceDetails.platformFeeBT + '9' + data.invoiceDetails.platformFeeTax + '9' + data.invoiceDetails.platformFeeTax + data.invoiceDetails.platformFeeAT)
+            str.push('Platform Fees99733111'+uom+ data.invoiceDetails.platformFeeBD + data.invoiceDetails.platformFeeBT + '9' + data.invoiceDetails.platformFeeTax + '9' + data.invoiceDetails.platformFeeTax + data.invoiceDetails.platformFeeAT)
         if (data.hospitalData.schemeDetails.deliveryBaseDiscount === '0')
             str.push('Delivery Protocol Base Fee 996519' + data.hospitalData.schemeDetails.distanceThreshold + 'Data Points ' + data.invoiceDetails.deliveryBaseBT + '9' + data.invoiceDetails.deliveryBaseTax + '9' + data.invoiceDetails.deliveryBaseTax + data.invoiceDetails.deliveryBaseAT)
         else
-            str.push('Delivery Protocol Base Fee 996519' + data.hospitalData.schemeDetails.distanceThreshold + 'Data Points ' + data.invoiceDetails.deliveryBaseBD + data.invoiceDetails.deliveryBaseBT + '9' + data.invoiceDetails.deliveryBaseTax + '9' + data.invoiceDetails.deliveryBaseTax + data.invoiceDetails.deliveryBaseAT)
+       //     str.push('Delivery Protocol Base Fee 996519' + data.hospitalData.schemeDetails.distanceThreshold + 'Data Points ' + data.invoiceDetails.deliveryBaseBD + data.invoiceDetails.deliveryBaseBT + '9' + data.invoiceDetails.deliveryBaseTax + '9' + data.invoiceDetails.deliveryBaseTax + data.invoiceDetails.deliveryBaseAT)
         if (data.hospitalData.schemeDetails.deliveryDiscount === '0')
             str.push('Delivery Protocol Distance Fee 996519' + dist + 'Data Points ' + data.invoiceDetails.deliveryDistanceBT + '9' + data.invoiceDetails.deliveryDistanceTax + '9' + data.invoiceDetails.deliveryDistanceTax + data.invoiceDetails.deliveryDistanceAT)
         else
-            str.push('Delivery Protocol Distance Fee 996519' + dist + 'Data Points ' + data.invoiceDetails.deliveryDistanceBD + data.invoiceDetails.deliveryDistanceBT + '9' + data.invoiceDetails.deliveryDistanceTax + '9' + data.invoiceDetails.deliveryDistanceTax + data.invoiceDetails.deliveryDistanceAT)
-        str.push('Details for Transfer of Funds in INRTotal Amount Before TaxINR ' + totalBT + ' Total SGSTINR ' + totalCSGST + ' Total CGSTINR ' + totalCSGST + ' Total AmountINR ' + totalAT + ' Total Amount (Rounded Off)INR ' + (Math.ceil(totalAT)).toFixed(2))
+         //   str.push('Delivery Protocol Distance Fee 996519' + dist + 'Data Points ' + data.invoiceDetails.deliveryDistanceBD + data.invoiceDetails.deliveryDistanceBT + '9' + data.invoiceDetails.deliveryDistanceTax + '9' + data.invoiceDetails.deliveryDistanceTax + data.invoiceDetails.deliveryDistanceAT)
+     
+         str.push('Details for Transfer of Funds in INRTotal Amount Before TaxINR ' + (totalBT).toFixed(2) + ' Total SGSTINR ' + totalCSGST + ' Total CGSTINR ' + totalCSGST + ' Total AmountINR ' + totalAT + ' Total Amount (Rounded Off)INR ' + (Math.ceil(totalAT)).toFixed(2))
         return str
     }
 }

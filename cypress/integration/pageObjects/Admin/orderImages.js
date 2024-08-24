@@ -11,14 +11,13 @@ export default class orderImages {
             cy.get('input').type(requestId)
             cy.get('button').contains('Search').click()
             cy.get('input[type="file"]').then((fileInput) => {
-                // Load the image file from fixtures
                 return this.uploadImage(fileInput)
-            }).then(()=>{
+            }).then(() => {
                 cy.get('button').contains('Upload').click()
                 cy.get('.swal-title').contains('Success')
                 cy.get('.swal-button--confirm').click()
                 resolve()
-            }) 
+            })
         })
     }
     sampleAcquired(requestId, creditType) {
@@ -95,7 +94,7 @@ export default class orderImages {
             })
         })
     }
-   agentArrived(requestId) {
+    agentArrived(requestId) {
         cy.get('span').then(($spans) => {
             const dashboardSpan = $spans.toArray().find(span => span.innerText.includes('Dashboard'));
             if (dashboardSpan) {
@@ -153,7 +152,7 @@ export default class orderImages {
             })
         })
     }
-    delivered(requestId,creditType,orderType) {
+    delivered(requestId, creditType, orderType) {
         cy.get('span').then(($spans) => {
             const dashboardSpan = $spans.toArray().find(span => span.innerText.includes('Dashboard'));
             if (dashboardSpan) {
@@ -162,14 +161,14 @@ export default class orderImages {
             cy.get('#orderimages').click({ force: true });
         })
         return new Cypress.Promise((resolve, reject) => {
-            let amount=null
+            let amount = null
             cy.get('input').type(requestId)
             cy.get('button').contains('Search').click()
             cy.get('#input-file-upload:nth-of-type(1)').then((fileInput) => {
                 return this.uploadImage(fileInput)
             }).then(() => {
                 cy.get('button').contains('Upload').click()
-                if ((creditType != 'FullCredit')&&(orderType==='Reservation'))
+                if ((creditType != 'FullCredit') && (orderType === 'Reservation'))
                     amount = this.collectPayment()
                 cy.get('.swal-title').contains('Success')
                 cy.get('.swal-button--confirm').click()

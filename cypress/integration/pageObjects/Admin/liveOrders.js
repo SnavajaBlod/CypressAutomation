@@ -64,7 +64,9 @@ export default class liveOrders {
       this.viewDetailsCredit().then((text) => {
         let creditAmount = text.text().trim();
         values['Credit'] = creditAmount
-      });
+      }).then(()=>{
+        cy.get('#closeModal').click()
+      })
       resolve(values);
     })
   }
@@ -100,6 +102,28 @@ validatePresenceOfDocs(requestId)
     this.actionsButton().click();
    cy.get('button').contains('Download Invoices')
    cy.get('button').contains('Download Order Summary')
+}
+downloadDocuments(requestId){
+    cy.get('span').then(($spans) => {
+      const dashboardSpan = $spans.toArray().find(span => span.innerText.includes('Dashboard'));
+      if (dashboardSpan) {
+        cy.wrap(dashboardSpan).click();
+      }
+      cy.get('#liveorders').click({ force: true });
+      this.searchBar().type(requestId)
+    })
+    return new Cypress.Promise((resolve, reject) => {
+      this.actionsButton().click();
+      this.downloadOrderSummary().click().then(()=>{
+        cy.get('.Toastify div div div div:nth-child(2)', { timeout: 20000 }).contains('File Downloaded Successfully!')
+      })
+      this.actionsButton().click();
+      this.downloadInvoices().click().then(()=>{
+        cy.get('.Toastify div div div div:nth-child(2)', { timeout: 20000 }).contains('File Downloaded Successfully')
+      })
+      resolve();
+    })
+  
 }
 
 }

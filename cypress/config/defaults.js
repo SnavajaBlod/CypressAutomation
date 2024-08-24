@@ -9,14 +9,14 @@ const defaults = {
     BLOOD_COMPONENT: 'Whole Blood',
     APP_DEPLOYMENT: "https://dev.blodplus.com/",
     ADMIN_EMAIL: "bloodsupport@blod.in",
-    DRIVER_DEPLOYMENT: 'https://blodplus-driver-git-develop-blod-in-team.vercel.app',
+    DRIVER_DEPLOYMENT: ' https://blodplus-driver-git-test-blod-in-team.vercel.app ',
     HOSPITAL_TO_BLOODBANK:"",
     BLOODBANK_TO_HOSPITAL:"",
     BLOODBANK:"Brown Blood Bank",
     DRIVER:"ayush@blod.in",
     HUB:"IMAX Hospital",
-    STATUS:"RequestRaised",
-    ITERATION:"1"
+    STATUS:"BloodbankAccepted",
+    ITERATION:"5"
   };
   
   export default defaults;
