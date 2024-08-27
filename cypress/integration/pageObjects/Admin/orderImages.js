@@ -10,7 +10,7 @@ export default class orderImages {
         return new Cypress.Promise((resolve, reject) => {
             cy.get('input').type(requestId)
             cy.get('button').contains('Search').click()
-            cy.get('input[type="file"]').then((fileInput) => {
+            cy.get('#header0UploadComponent').then((fileInput) => {
                 return this.uploadImage(fileInput)
             }).then(() => {
                 cy.get('button').contains('Upload').click()
@@ -105,7 +105,7 @@ export default class orderImages {
         return new Cypress.Promise((resolve, reject) => {
             cy.get('input').type(requestId)
             cy.get('button').contains('Search').click()
-            cy.get('#input-file-upload:nth-of-type(1)').then((fileInput) => {
+            cy.get('#header0UploadComponent').then((fileInput) => {
                 return this.uploadImage(fileInput)
             }).then(() => {
                 cy.get('button').contains('Upload').click()

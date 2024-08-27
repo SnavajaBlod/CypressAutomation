@@ -11,7 +11,7 @@ export default class updateBloodbankPrices {
             let compCharge
             let values = {}
             cy.get('label:contains("Select Blood Bank") + div > div > div > div:nth-of-type(2) > input').type(input.bloodbankData.name, { force: true }).type('{enter}')
-            cy.wait(1000);
+            cy.wait(500);
             cy.get('#crossMatchingCharges').invoke('val').then((text) => {
                 this.crossMatching = text
                 cy.log(this.crossMatching)

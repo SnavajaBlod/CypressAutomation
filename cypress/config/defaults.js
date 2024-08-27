@@ -1,6 +1,6 @@
 const defaults = {
   // ORDER_TYPE: ['Regular', 'Emergency','Reservation'],
-   ORDER_TYPE: 'Regular',
+   ORDER_TYPE: 'Reservation',
   //  CREDIT_TYPE:['NoCredit','BlodCredit','FullCredit'],
   CREDIT_TYPE:'BlodCredit',
    // PREFERRED_BLOODBANK: ['No','Yes'],

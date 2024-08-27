@@ -12,7 +12,7 @@ export default class updateBloodbankPrices {
             cy.get('input').type(input.hospitalData.name).type('{enter}')
             cy.get('body > div > div > div:nth-of-type(2) > div > div:nth-of-type(2) > section > div:nth-of-type(3) > div > div > div > div').then(scheme => {
                 values['schemeName'] = scheme.text()
-                cy.log('in scheme'+values.schemeName)
+                cy.log('in scheme' + values.schemeName)
                 if (values.schemeName === 'Flat Platform Fee Package') {
                     this.flatPlatformPackage().then(value => {
                         values['schemeDetails'] = value
@@ -31,6 +31,30 @@ export default class updateBloodbankPrices {
                         resolve(values)
                     })
                 }
+            })
+        })
+    }
+    changePricingScheme(hospital, schemeName) {
+        cy.get('span').then(($spans) => {
+            const dashboardSpan = $spans.toArray().find(span => span.innerText.includes('Dashboard'));
+            if (dashboardSpan) {
+                cy.wrap(dashboardSpan).click();
+            }
+            cy.get('#updatehospitaldetails').click({ force: true });
+        })
+        return new Cypress.Promise((resolve, reject) => {
+            let currentScheme
+            cy.get('input').type(hospital).type('{enter}')
+            cy.get('#selectTemplate > div > div:nth-of-type(1) > div:nth-of-type(1) ').then(text => {
+                return currentScheme = text.text()
+            }).then(() => {
+                if (currentScheme !== schemeName) {
+                    cy.get('#selectTemplate > div > div:nth-of-type(1) > div:nth-of-type(2) > input').type(schemeName, { force: true }).type('{enter}')
+                    cy.get('#submit').click()
+                    cy.get('button > p').contains('Confirm').click()
+                    cy.get('.Toastify__toast-body > div').contains('Prices Updated Successfully!')
+                }
+                resolve()
             })
         })
     }
@@ -114,7 +138,7 @@ export default class updateBloodbankPrices {
             })
             cy.get('#amount-Charge1 div > div > input').invoke('val').then(amount => {
                 values['regularAmount'] = amount
-            })  
+            })
             cy.get('#amount-Charge2 div > div > input').invoke('val').then(amount => {
                 values['cancellationAmount'] = amount
                 resolve(values)

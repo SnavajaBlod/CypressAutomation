@@ -93,25 +93,32 @@ Cypress.Commands.add('agentArrived', (requestId) => {
 })
 Cypress.Commands.add('sampleAcquired', (requestId, creditType) => {
     cy.openRequestPage(requestId)
-    let val
-    if (creditType != 'FullCredit') {
-        cy.collectPayment().then((value) => {
-            val = value
-        })
-    }
-    cy.origin('https://blodplus-driver-git-test-blod-in-team.vercel.app', () => {
+    const cred = { credit: creditType }
+    cy.origin('https://blodplus-driver-git-test-blod-in-team.vercel.app', { args: { cred } }, ({ cred }) => {
+        let val
+        const { credit } = cred
+        if (credit !== 'FullCredit') {
+            cy.get('td:contains("Amount") + td').then(text => {
+                val = text.text().split(' ')[1]
+            })
+            cy.get('#collectPaymentButton').click()
+            cy.get('input[value="Cash"]').click()
+            cy.get('#paymentButton').click()
+            cy.get('.Toastify > div > div > div > div:nth-of-type(2)').contains('Payment Details Updated')
+        }
         cy.get('#captureButton', { timeout: 20000 }).click()
         cy.get('#nextButton').click()
         cy.get('#captureButton').click()
         cy.get('#nextButton').click()
         cy.get('#captureButton').click()
         cy.get('#uploadButton').click()
-        cy.get('h1').contains('Welcome back!', { timeout: 20000 })
+        cy.get('h1').contains('Welcome back!', { timeout: 20000 }).then(()=>{
+            return val
+        })
+        
     })
-    console.log('val is' + val)
-    return val
-
 })
+
 Cypress.Commands.add('crossMatching', (requestId) => {
     cy.openRequestPage(requestId)
     cy.origin('https://blodplus-driver-git-test-blod-in-team.vercel.app', () => {
@@ -154,12 +161,26 @@ Cypress.Commands.add('issued', (requestId) => {
 })
 Cypress.Commands.add('delivered', (requestId, creditType, orderType) => {
     cy.openRequestPage(requestId)
-    if (creditType != 'FullCredit' && orderType == 'Reservation')
-        cy.collectPayment()
-    cy.origin('https://blodplus-driver-git-test-blod-in-team.vercel.app', () => {
+    const cred = { credit: creditType }
+    const ordT = {oType: orderType}
+    cy.origin('https://blodplus-driver-git-test-blod-in-team.vercel.app', { args: { cred,ordT } }, ({ cred,ordT }) => {
+        let val
+        const {oType} = ordT
+        const { credit } = cred
+        if ((credit !== 'FullCredit') && (oType === 'Reservation')) {
+            cy.get('td:contains("Amount") + td').then(text => {
+                val = text.text().split(' ')[1]
+            })
+            cy.get('#collectPaymentButton').click()
+            cy.get('input[value="Cash"]').click()
+            cy.get('#paymentButton').click()
+            cy.get('.Toastify > div > div > div > div:nth-of-type(2)').contains('Payment Details Updated')
+        }
         cy.get('#captureButton', { timeout: 20000 }).click()
-        cy.get('#uploadButton').click()
-        cy.get('h1').contains('Welcome back!', { timeout: 20000 })
+        cy.get('#uploadButton').click() 
+        cy.get('h1').contains('Welcome back!', { timeout: 20000 }).then(()=>{
+            return val
+        })
     })
 })
 Cypress.Commands.add('collectPayment', () => {
@@ -171,9 +192,11 @@ Cypress.Commands.add('collectPayment', () => {
         cy.get('#collectPaymentButton').click()
         cy.get('input[value="Cash"]').click()
         cy.get('#paymentButton').click()
-        cy.get('.Toastify > div > div > div > div:nth-of-type(2)').contains('Payment Details Updated')
-        console.log('val2=' + val)
-        return val
+        cy.get('.Toastify > div > div > div > div:nth-of-type(2)').contains('Payment Details Updated').then(() => {
+            console.log('val2=' + val)
+            return val
+        })
+
     })
 })
 Cypress.Commands.add('getDistances', (source, destination) => {

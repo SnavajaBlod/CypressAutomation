@@ -24,39 +24,15 @@ describe('Flat Package - E2E Positive Cases', function () {
     orderTypes.forEach(orderType => {
         creditTypes.forEach(creditType => {
             prefBloodbanks.forEach(prefBloodbank => {
-                it(`[${orderType} Order] [${creditType}] [Preferred Bloodbank-${prefBloodbank}] `, function () {
-                    let orderData, expInvoice, expOrderSummary
-                    cy.loginToApplication(admin);
-
-                    cy.importPages().then(pages => {
-                        base.setInitialData(this.data, pages, orderType, creditType, prefBloodbank).then((data) => {
-                            orderData = base.getInvoiceValues(data)
-                        })
-                            .then(() => {
-                                cy.logoutOfApplication()
-                                cy.loginToApplication(orderData.hospitalData.email)
-                                return pages.raiseRequest.placeOrder(orderData)
-                            }).then((data) => {
-                                orderData = data
-                                cy.logoutOfApplication();
-                                cy.loginToApplication(admin);
-                                return pages.driverMapping.mapDriver(orderData.requestId, orderData.bloodbankData.name, driver, hub)
-                            }).then(() => {
-                                pages.orderImages.agentArrived(orderData.requestId)
-                                cy.visit(driverAppLink)
-                                cy.loginToDriverApp(driver)
-
-
-                                cy.sampleAcquired(orderData.requestId + "-a", orderData.hospitalData.creditType)
-
-
-                            })
-
+                it(`[${orderType} Order] [${creditType}] [Preferred Bloodbank-${prefBloodbank}] `, function () {   
+                              base.convertPdfToText('C:/Users/VC/Downloads/cf77ce2f-a-orderSummary.pdf').then((data)=>{
+cy.log(data)
+                              })
                     })
                 });
             })
         })
     })
-})
+
 
 
