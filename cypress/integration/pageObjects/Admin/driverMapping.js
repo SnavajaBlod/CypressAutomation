@@ -25,7 +25,7 @@ export default class driverMapping {
             if (dashboardSpan) {
                 cy.wrap(dashboardSpan).click();
             }
-            cy.get('button').contains('Link').click();
+            cy.get('button').contains('Link').click({force:true});
         })
         return new Cypress.Promise((resolve, reject) => {
             this.requestIdInput().type(requestId)

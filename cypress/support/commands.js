@@ -58,7 +58,7 @@ Cypress.Commands.add('logoutOfApplication', () => {
 })
 Cypress.Commands.add('loginToDriverApp', (driver) => {
     const d = { email: driver }
-    cy.origin('https://blodplus-driver-git-test-blod-in-team.vercel.app', { args: { d } }, ({ d }) => {
+    cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app', { args: { d } }, ({ d }) => {
         const { email } = d
         cy.clearCookies();
         cy.clearLocalStorage();
@@ -71,7 +71,7 @@ Cypress.Commands.add('loginToDriverApp', (driver) => {
 })
 Cypress.Commands.add('openRequestPage', (requestId) => {
     const req = { reqId: requestId }
-    cy.origin('https://blodplus-driver-git-test-blod-in-team.vercel.app', { args: { req } }, ({ req }) => {
+    cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app', { args: { req } }, ({ req }) => {
         const { reqId } = req
         cy.get('h1').contains('Welcome back!', { timeout: 20000 })
         cy.get('tbody tr').each($el => {
@@ -85,7 +85,7 @@ Cypress.Commands.add('openRequestPage', (requestId) => {
 })
 Cypress.Commands.add('agentArrived', (requestId) => {
     cy.openRequestPage(requestId)
-    cy.origin('https://blodplus-driver-git-test-blod-in-team.vercel.app', () => {
+    cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app', () => {
         cy.get('#captureButton', { timeout: 20000 }).click()
         cy.get('#uploadButton').click()
         cy.get('h1').contains('Welcome back!', { timeout: 20000 })
@@ -94,7 +94,7 @@ Cypress.Commands.add('agentArrived', (requestId) => {
 Cypress.Commands.add('sampleAcquired', (requestId, creditType) => {
     cy.openRequestPage(requestId)
     const cred = { credit: creditType }
-    cy.origin('https://blodplus-driver-git-test-blod-in-team.vercel.app', { args: { cred } }, ({ cred }) => {
+    cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app', { args: { cred } }, ({ cred }) => {
         let val
         const { credit } = cred
         if (credit !== 'FullCredit') {
@@ -121,7 +121,7 @@ Cypress.Commands.add('sampleAcquired', (requestId, creditType) => {
 
 Cypress.Commands.add('crossMatching', (requestId) => {
     cy.openRequestPage(requestId)
-    cy.origin('https://blodplus-driver-git-test-blod-in-team.vercel.app', () => {
+    cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app', () => {
         cy.get('#captureButton', { timeout: 20000 }).click()
         cy.get('#uploadButton').click()
         cy.get('h1').contains('Welcome back!', { timeout: 20000 })
@@ -129,7 +129,7 @@ Cypress.Commands.add('crossMatching', (requestId) => {
 })
 Cypress.Commands.add('reserved', (requestId) => {
     cy.openRequestPage(requestId)
-    cy.origin('https://blodplus-driver-git-test-blod-in-team.vercel.app', () => {
+    cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app', () => {
         cy.get('#captureButton', { timeout: 20000 }).click()
         cy.get('#uploadButton').click()
         cy.get('h1').contains('Welcome back!', { timeout: 20000 })
@@ -137,7 +137,7 @@ Cypress.Commands.add('reserved', (requestId) => {
 })
 Cypress.Commands.add('agentAtBloodbank', (requestId) => {
     cy.openRequestPage(requestId)
-    cy.origin('https://blodplus-driver-git-test-blod-in-team.vercel.app', () => {
+    cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app', () => {
         cy.get('#captureButton', { timeout: 20000 }).click()
         cy.get('#uploadButton').click()
         cy.get('h1').contains('Welcome back!', { timeout: 20000 })
@@ -145,7 +145,7 @@ Cypress.Commands.add('agentAtBloodbank', (requestId) => {
 })
 Cypress.Commands.add('issued', (requestId) => {
     cy.openRequestPage(requestId)
-    cy.origin('https://blodplus-driver-git-test-blod-in-team.vercel.app', () => {
+    cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app', () => {
         cy.get('#captureButton', { timeout: 20000 }).click()
         cy.get('#nextButton').click()
         cy.get('#captureButton').click()
@@ -163,7 +163,7 @@ Cypress.Commands.add('delivered', (requestId, creditType, orderType) => {
     cy.openRequestPage(requestId)
     const cred = { credit: creditType }
     const ordT = {oType: orderType}
-    cy.origin('https://blodplus-driver-git-test-blod-in-team.vercel.app', { args: { cred,ordT } }, ({ cred,ordT }) => {
+    cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app', { args: { cred,ordT } }, ({ cred,ordT }) => {
         let val
         const {oType} = ordT
         const { credit } = cred
@@ -184,7 +184,7 @@ Cypress.Commands.add('delivered', (requestId, creditType, orderType) => {
     })
 })
 Cypress.Commands.add('collectPayment', () => {
-    return cy.origin('https://blodplus-driver-git-test-blod-in-team.vercel.app', () => {
+    return cy.origin('https://blodplus-driver-git-develop-blod-in-team.vercel.app', () => {
         let val
         cy.get('td:contains("Amount") + td').then(text => {
             val = text.text().split(' ')[1]
