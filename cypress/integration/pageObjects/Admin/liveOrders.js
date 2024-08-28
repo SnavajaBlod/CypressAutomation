@@ -23,6 +23,9 @@ export default class liveOrders {
   {
     return cy.get('button').contains('Approve Invoice')
   }
+  approveReservationButton(){
+    return cy.get('button').contains('Approve Reservation')
+  }
   downloadOrderSummary()
   {
     return cy.get('button').contains('Download Order Summary')
@@ -65,7 +68,7 @@ export default class liveOrders {
         let creditAmount = text.text().trim();
         values['Credit'] = creditAmount
       }).then(()=>{
-        cy.get('#closeModal').click()
+        cy.get('#closeModal').click({force:true})
       })
       resolve(values);
     })
@@ -124,6 +127,25 @@ downloadDocuments(requestId){
       resolve();
     })
   
+}
+approveReservation(requestId,units){
+  cy.get('span').then(($spans) => {
+    const dashboardSpan = $spans.toArray().find(span => span.innerText.includes('Dashboard'));
+    if (dashboardSpan) {
+      cy.wrap(dashboardSpan).click();
+    }
+    cy.get('#liveorders').click({ force: true });
+    this.searchBar().type(requestId)
+  })
+  return new Cypress.Promise((resolve, reject) => {
+    this.actionsButton().click();
+    this.approveReservationButton().click().then(()=>{
+      cy.get('label').contains('Units').parent().find('div > div > div:nth-of-type(1) > div:nth-of-type(2) > input').type(units).type('{enter}')
+      cy.get('button').contains('Confirm').click()
+      cy.get('.Toastify div div div div:nth-child(2)').contains('Reservation Approved', { timeout: 20000 })
+    })
+    resolve()
+  })
 }
 
 }

@@ -29,7 +29,7 @@ describe('Flat Package - E2E Positive Cases', function () {
                         base.setInitialData(this.data, pages, orderType, creditType, prefBloodbank).then((data) => {
                             orderData = base.getInvoiceValues(data)
                             return orderData = base.assignCredits(data)
-                        }).then(() => {
+                        }).then(() => { //change scheme
                             return pages.hospitalPrices.changePricingScheme(orderData.hospitalData.name, scheme)
                         }).then(() => { //raise request
                             cy.logoutOfApplication()
@@ -75,18 +75,25 @@ describe('Flat Package - E2E Positive Cases', function () {
                             cy.loginToDriverApp(driver)
                             return cy.sampleAcquired(orderData.requestId + "-a", orderData.hospitalData.creditType).then((amount) => {
                                 if (orderData.hospitalData.creditType !== 'FullCredit') {
+
                                     assert.equal(amount, orderData.paymentDetails.Due)
                                     orderData.paymentDetails.Paid = orderData.paymentDetails.Due
                                     orderData.paymentDetails.Due = 'N/A'
+
                                 }
                             })
-                        }).then(() => { //verify view details
+                        }).then(() => { //verify view details   
                             cy.visit(appLink)
                             return pages.liveOrders.viewDetailsPaymentInfo(orderData.requestId).then(values => {
+                            
+        
                                 cy.then(() => {
+                                   
                                     Object.keys(values).forEach(key => {
-                                        cy.log('actual:' + values[key] + ", expected:" + orderData.paymentDetails[key])
-                                        assert.equal(values[key], orderData.paymentDetails[key])
+                                     
+                                        cy.log('actual:' + values[key] + ", expected:" + orderData.paymentDetails[key]).then(() => {
+                                            assert.equal(values[key], orderData.paymentDetails[key])
+                                        })
                                     })
                                 })
                             })
@@ -94,30 +101,37 @@ describe('Flat Package - E2E Positive Cases', function () {
                             cy.visit(driverAppLink)
                             cy.loginToDriverApp(driver)
                             cy.crossMatching(orderData.requestId + "-a")
+                        }).then(() => {
                             if (orderData.orderType == 'Reservation') {
                                 cy.reserved(orderData.requestId + "-a")
-                                cy.visit(appLink)
-                                cy.logoutOfApplication();
-                                cy.loginToApplication(orderData.hospitalData.email)
-                                pages.hPendingActions.approveReservation('2')
-                                orderData.orderStatus = 'Reservation Approved'
-                                orderData = base.getInvoiceValues(orderData)
-                                if (orderData.hospitalData.creditType === 'FullCredit') {
-                                    orderData.paymentDetails.Total = Math.ceil(orderData.invoiceDetails.totalAmount)
-                                    orderData.paymentDetails.Credit = orderData.paymentDetails.Total
-                                }
-                                else if (orderData.hospitalData.creditType === 'NoCredit') {
-                                    orderData.paymentDetails.Due = Math.ceil(orderData.invoiceDetails.totalAmount - Number(orderData.paymentDetails.Paid))
-                                    orderData.paymentDetails.Total = Math.ceil(orderData.invoiceDetails.totalAmount)
-                                }
-                                else if (orderData.hospitalData.creditType === 'BlodCredit') {
-                                    orderData.paymentDetails.Credit = Math.ceil(orderData.invoiceDetails.blodTotal)
-                                    orderData.paymentDetails.Due = Math.ceil(orderData.invoiceDetails.bloodbankTotal - Number(orderData.paymentDetails.Paid))
-                                    orderData.paymentDetails.Total = Math.ceil(orderData.invoiceDetails.totalAmount)
-                                }
+                                cy.visit(appLink).then(() => {
+                                    pages.liveOrders.approveReservation(orderData.requestId,'2').then(() => {
+                                        orderData.orderStatus = 'Reservation Approved'
+                                        orderData = base.getInvoiceValues(orderData)
+                                        if (orderData.hospitalData.creditType === 'FullCredit') {
+                                            orderData.paymentDetails.Total = Math.ceil(orderData.invoiceDetails.totalAmount)
+                                            orderData.paymentDetails.Credit = orderData.paymentDetails.Total
+                                        }
+                                        else if (orderData.hospitalData.creditType === 'NoCredit') {
+                                            orderData.paymentDetails.Due = Math.ceil(orderData.invoiceDetails.totalAmount - Number(orderData.paymentDetails.Paid))
+                                            orderData.paymentDetails.Total = Math.ceil(orderData.invoiceDetails.totalAmount)
+                                        }
+                                        else if (orderData.hospitalData.creditType === 'BlodCredit') {
+                                            orderData.paymentDetails.Credit = Math.ceil(orderData.invoiceDetails.blodTotal)
+                                            orderData.paymentDetails.Due = Math.ceil(orderData.invoiceDetails.bloodbankTotal - Number(orderData.paymentDetails.Paid))
+                                            orderData.paymentDetails.Total = Math.ceil(orderData.invoiceDetails.totalAmount)
+                                        }
+                                    })
+                                })
+                                //    cy.logoutOfApplication();
+                                //   cy.loginToApplication(orderData.hospitalData.email)
+                                //  pages.hPendingActions.approveReservation('2')
+
+
                                 cy.visit(driverAppLink)
                                 cy.loginToDriverApp(driver)
                                 cy.agentAtBloodbank(orderData.requestId + "-a")
+                                cy.visit(appLink)
                                 pages.liveOrders.viewDetailsPaymentInfo(orderData.requestId).then(values => {
                                     cy.then(() => {
                                         Object.keys(values).forEach(key => {
@@ -126,22 +140,23 @@ describe('Flat Package - E2E Positive Cases', function () {
                                         })
                                     })
                                 })
-                             /*   pages.liveOrders.downloadDocuments(orderData.requestId)
-                                expInvoice = base.expectedInvoice(orderData)
-                                expOrderSummary = base.expectedOrderSummary(orderData)
-                                cy.wait(3000)
-                                base.convertPdfToText('C:\\Users\\VC\\CypressAutomationLocal\\cypress\\downloads\\' + orderData.requestId + '-a-hospital-' + orderData.hospitalData.name + '-invoice.pdf').then((actInvoice) => {
-                                    expInvoice.forEach(exp => {
-                                        expect(actInvoice).to.include(exp)
-                                    })
-                                })
-                                base.convertPdfToText('C:\\Users\\VC\\CypressAutomationLocal\\cypress\\downloads\\' + orderData.requestId + '-a-orderSummary.pdf').then((actOrderSummary) => {
-                                    expOrderSummary.forEach(exp => {
-                                        expect(actOrderSummary).to.include(exp)
-                                    })
-                                })*/
+                                /*   pages.liveOrders.downloadDocuments(orderData.requestId)
+                                   expInvoice = base.expectedInvoice(orderData)
+                                   expOrderSummary = base.expectedOrderSummary(orderData)
+                                   cy.wait(3000)
+                                   base.convertPdfToText('C:\\Users\\VC\\CypressAutomationLocal\\cypress\\downloads\\' + orderData.requestId + '-a-hospital-' + orderData.hospitalData.name + '-invoice.pdf').then((actInvoice) => {
+                                       expInvoice.forEach(exp => {
+                                           expect(actInvoice).to.include(exp)
+                                       })
+                                   })
+                                   base.convertPdfToText('C:\\Users\\VC\\CypressAutomationLocal\\cypress\\downloads\\' + orderData.requestId + '-a-orderSummary.pdf').then((actOrderSummary) => {
+                                       expOrderSummary.forEach(exp => {
+                                           expect(actOrderSummary).to.include(exp)
+                                       })
+                                   })*/
                             }
-                            return
+                            cy.visit(driverAppLink)
+                            return cy.loginToDriverApp(driver)
                         }).then(() => {
                             cy.issued(orderData.requestId + "-a")
                             cy.delivered(orderData.requestId + "-a", orderData.hospitalData.creditType, orderData.orderType).then(() => {
@@ -168,44 +183,11 @@ describe('Flat Package - E2E Positive Cases', function () {
 
                         })
                     })
-
                 })
-                /*  
-                         
- 
-                         pages.liveOrders.viewDetailsPaymentInfo(orderData.requestId).then(values => {
-                             cy.then(() => {
-                                 cy.log('Total:', values.total);
-                                 cy.log('Due:', values.due);
-                                 cy.log('Credit:', values.credit);
-                                 cy.log('Paid:', values.paid);
-                             })
-                         })
-                         cy.visit(driverAppLink)
-                         cy.loginToDriverApp(driver)
-                         cy.agentArrived(orderData.requestId + "-a")
-                         cy.sampleAcquired(orderData.requestId + "-a", orderData.hospitalData.creditType)
-                         cy.crossMatching(orderData.requestId + "-a")
-                         if (orderData.orderType == 'Reservation') {
-                             cy.reserved(orderData.requestId + "-a")
-                             cy.visit(appLink)
-                             cy.logoutOfApplication();
-                             cy.loginToApplication(orderData.hospitalData.email)
-                             pages.hPendingActions.approveReservation('2')
-                             cy.visit(driverAppLink)
-                             cy.loginToDriverApp(driver)
-                             cy.agentAtBloodbank(orderData.requestId + "-a")
-                         }
-                         cy.issued(orderData.requestId + "-a")
-                         cy.delivered(orderData.requestId + "-a", orderData.hospitalData.creditType, orderData.orderType)
-                         cy.visit(appLink)
-                         cy.logoutOfApplication();
-                         cy.loginToApplication(admin)
-                         pages.liveOrders.approveInvoice(orderData.requestId)*/
-                //     })
             })
         })
     })
+
 })
 
 

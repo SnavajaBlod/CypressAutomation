@@ -110,12 +110,13 @@ export default class baseClass {
 
     }
     getInvoiceValues(orderData) {
+        let values={}
         if (orderData.hospitalData.schemeName === 'Flat Platform Fee Package')
-            orderData = this.flatPlatformPackage(orderData)
+            orderData.invoiceDetails = this.flatPlatformPackage(orderData)
         else if (orderData.hospitalData.schemeName === 'Deprecated Platform Fee Package')
-            orderData = this.deprecatedPlatformPackage(orderData)
+            orderData.invoiceDetails = this.deprecatedPlatformPackage(orderData)
         else if (orderData.hospitalData.schemeName === 'Blood Flat Package')
-            orderData = this.bloodFlatPackage(orderData)
+            orderData.invoiceDetails = this.bloodFlatPackage(orderData)
       //  orderData = this.assignCredits(orderData)
         return orderData
     }
@@ -163,8 +164,8 @@ export default class baseClass {
         values['deliveryDistanceBT'] = (deliveryBeforeTax).toFixed(2)
         values['deliveryDistanceAT'] = (deliveryAfterTax).toFixed(2)
         values['deliveryDistanceTax'] = (deliveryCSGST).toFixed(2)
-        data.invoiceDetails = values
-        return data
+       // data.invoiceDetails = values
+        return values
     }
     deprecatedPlatformPackage(data) {
         let bloodbankTotal, blodTotal, platformFeeBeforeTax, platformFeeAfterTax, platformFeeCSGST
@@ -208,8 +209,8 @@ export default class baseClass {
         values['deliveryDistanceAT'] = (deliveryAfterTax).toFixed(2)
         values['deliveryDistanceTax'] = (deliveryCSGST).toFixed(2)
         for (const [key, value] of Object.entries(values)) { console.log(`${key}: ${value}`); }
-        data.invoiceDetails = values
-        return data
+     //   data.invoiceDetails = values
+        return values
     }
     bloodFlatPackage(data) {
         let values = {}
@@ -230,8 +231,7 @@ export default class baseClass {
         values['blodTotal'] = (blodAmountAfterTax).toFixed(2)
         values['blodAmountTax'] = (blodAmountCSGST).toFixed(2)
         values['blodAmountBT'] = (blodAmountBeforeTax).toFixed(2)
-        data.invoiceDetails = values
-        return data
+        return values
     }
     applyDiscount(unit, amount, discountValue) {
         if (unit == '₹')

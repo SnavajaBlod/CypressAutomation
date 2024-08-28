@@ -8,10 +8,12 @@ export default class orderImages {
             cy.get('#orderimages').click({ force: true });
         })
         return new Cypress.Promise((resolve, reject) => {
-            cy.get('input').type(requestId)
+            cy.get('input').type(requestId.split('-')[0])
             cy.get('button').contains('Search').click()
+            cy.get('p').contains('Agent Arrived')
             cy.get('#header0UploadComponent').then((fileInput) => {
-                return this.uploadImage(fileInput)
+                this.uploadImage(fileInput)
+                
             }).then(() => {
                 cy.get('button').contains('Upload').click()
                 cy.get('.swal-title').contains('Success')
@@ -30,26 +32,30 @@ export default class orderImages {
         })
         return new Cypress.Promise((resolve, reject) => {
             let amount = null
-            cy.get('input').type(requestId)
+            cy.get('input').type(requestId.split('-')[0])
             cy.get('button').contains('Search').click()
-            cy.get('#input-file-upload').eq(0).then((fileInput) => {
-                return this.uploadImage(fileInput)
-            }).then(() => {
-                return cy.get('#input-file-upload').eq(1)
-            }).then((fileInput) => {
-                return this.uploadImage(fileInput)
-            }).then(() => {
-                return cy.get('#input-file-upload').eq(2)
-            }).then((fileInput) => {
-                return this.uploadImage(fileInput)
-            }).then(() => {
-                cy.get('button').contains('Upload').click()
-                if (creditType != 'FullCredit')
-                    amount = this.collectPayment()
-                cy.get('.swal-title').contains('Success')
-                cy.get('.swal-button--confirm').click()
+            cy.get('p').contains('Sample Acquired')
+            cy.get('#header0UploadComponent').then((fileInput) => {
+                this.uploadImage(fileInput)
+            })
+            cy.get('#header1UploadComponent').then((fileInput) => {
+                this.uploadImage(fileInput)
+            })
+            cy.get('#header2UploadComponent').then((fileInput) => {
+                this.uploadImage(fileInput)
+            })
+            cy.get('button').contains('Upload').click().then(() => {
+                if (creditType != 'FullCredit') {
+                    cy.get('input[value="Cash"]').click()
+                    cy.get('button').contains('Confirm').click()
+                }
+            })
+            cy.get('.swal-title').contains('Success')
+            cy.get('.swal-button--confirm').click().then(() => {
                 resolve(amount)
             })
+
+
         })
     }
     crossMatching(requestId) {
@@ -61,9 +67,10 @@ export default class orderImages {
             cy.get('#orderimages').click({ force: true });
         })
         return new Cypress.Promise((resolve, reject) => {
-            cy.get('input').type(requestId)
+            cy.get('input').type(requestId.split('-')[0])
             cy.get('button').contains('Search').click()
-            cy.get('#input-file-upload:nth-of-type(1)').then((fileInput) => {
+            cy.get('p').contains('Cross Matching')
+            cy.get('#header0UploadComponent').then((fileInput) => {
                 return this.uploadImage(fileInput)
             }).then(() => {
                 cy.get('button').contains('Upload').click()
@@ -82,9 +89,10 @@ export default class orderImages {
             cy.get('#orderimages').click({ force: true });
         })
         return new Cypress.Promise((resolve, reject) => {
-            cy.get('input').type(requestId)
+            cy.get('input').type(requestId.split('-')[0])
             cy.get('button').contains('Search').click()
-            cy.get('#input-file-upload:nth-of-type(1)').then((fileInput) => {
+            cy.get('p').contains('Reserved')
+            cy.get('#header0UploadComponent').then((fileInput) => {
                 return this.uploadImage(fileInput)
             }).then(() => {
                 cy.get('button').contains('Upload').click()
@@ -94,7 +102,7 @@ export default class orderImages {
             })
         })
     }
-    agentArrived(requestId) {
+    agentAtBloodbank(requestId) {
         cy.get('span').then(($spans) => {
             const dashboardSpan = $spans.toArray().find(span => span.innerText.includes('Dashboard'));
             if (dashboardSpan) {
@@ -103,8 +111,9 @@ export default class orderImages {
             cy.get('#orderimages').click({ force: true });
         })
         return new Cypress.Promise((resolve, reject) => {
-            cy.get('input').type(requestId)
+            cy.get('input').type(requestId.split('-')[0])
             cy.get('button').contains('Search').click()
+            cy.get('p').contains('Agent At BloodBank')
             cy.get('#header0UploadComponent').then((fileInput) => {
                 return this.uploadImage(fileInput)
             }).then(() => {
@@ -124,24 +133,25 @@ export default class orderImages {
             cy.get('#orderimages').click({ force: true });
         })
         return new Cypress.Promise((resolve, reject) => {
-            cy.get('input').type(requestId)
+            cy.get('input').type(requestId.split('-')[0])
             cy.get('button').contains('Search').click()
-            cy.get('#input-file-upload:nth-of-type(1)').then((fileInput) => {
+            cy.get('p').contains('Issued')
+            cy.get('#header0UploadComponent').then((fileInput) => {
                 return this.uploadImage(fileInput)
             }).then(() => {
-                return cy.get('#input-file-upload:nth-of-type(2)')
+                return cy.get('#header1UploadComponent')
             }).then((fileInput) => {
                 return this.uploadImage(fileInput)
             }).then(() => {
-                return cy.get('#input-file-upload:nth-of-type(3)')
+                return cy.get('#header2UploadComponent')
             }).then((fileInput) => {
                 return this.uploadImage(fileInput)
             }).then(() => {
-                return cy.get('#input-file-upload:nth-of-type(4)')
+                return cy.get('#header3UploadComponent')
             }).then((fileInput) => {
                 return this.uploadImage(fileInput)
             }).then(() => {
-                return cy.get('#input-file-upload:nth-of-type(5)')
+                return cy.get('#header4UploadComponent')
             }).then((fileInput) => {
                 return this.uploadImage(fileInput)
             }).then(() => {
@@ -162,9 +172,10 @@ export default class orderImages {
         })
         return new Cypress.Promise((resolve, reject) => {
             let amount = null
-            cy.get('input').type(requestId)
+            cy.get('input').type(requestId.split('-')[0])
             cy.get('button').contains('Search').click()
-            cy.get('#input-file-upload:nth-of-type(1)').then((fileInput) => {
+            cy.get('p').contains('Delivered')
+            cy.get('#header0UploadComponent').then((fileInput) => {
                 return this.uploadImage(fileInput)
             }).then(() => {
                 cy.get('button').contains('Upload').click()
@@ -191,6 +202,7 @@ export default class orderImages {
             fileInput[0].files = dataTransfer.files;
             // Trigger the change event on the file input
             cy.wrap(fileInput).trigger('change', { force: true });
+            
         })
     }
 }
